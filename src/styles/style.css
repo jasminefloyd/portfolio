@@ -1,0 +1,227 @@
+/* Default Resets */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Root Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Poppins", sans-serif;
+  font-optical-sizing: auto;
+  height: 100%;
+}
+
+
+/* Main App Components */
+button {
+  width: 125px;
+  height: 48px;
+  border-radius: 50px;
+  border: #35374B solid 1px;
+}
+
+/* Site Header */
+.site-header {
+  width: 100%;
+  height: 105px;
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+}
+
+
+.site-header > img {
+  align-self: center;
+  width: 100px;
+  height: 100px;
+  margin-left: 20px;
+}
+
+.site-header > nav {
+  align-self: center;
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  margin: 0;
+  margin-right: 25px;
+
+}
+
+.nav-list {
+  display: flex;
+
+}
+
+.nav-list > li {
+  list-style: none;
+  margin-left: 20px;
+  
+}
+
+/* About Section */
+.about-section {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  height: 550px;
+  gap: 3em;
+  padding-top: 50px;
+
+}
+
+.biz-card >img {
+  width: 160px;
+  height: 225px;
+  align-self: center;
+  justify-self: center;
+}
+
+.about-textarea {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Outside Work Section */
+.outside-section {
+  display: flex;
+  width: 100%;
+  background-image: url('../assets/lakers.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 550px;
+  position: relative; /* Needed for the overlay */
+}
+
+.outside-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff2b; /* Light overlay */
+  pointer-events: none; /* Allows interaction with content inside .outside-section */
+  z-index: 1;
+}
+
+
+.outside-left {
+  border: #35374B 2px solid;
+  width: 100%;
+  align-content: center;
+}
+
+.outside-left > h1 {
+  color: #fff;
+  z-index: 2;
+}
+
+.outside-right {
+  border: #35374B 2px solid;
+  width: 100%;
+  align-content: center;
+}
+
+.outside-right > p {
+  color: #fff;
+  z-index: 2;
+}
+
+.outside-btn-area {
+  display: flex;
+  z-index: 2;
+}
+
+/* Contact Me Section */
+.contact-section {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 550px;
+}
+
+.contact-left {
+  flex: 1;
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+}
+.contact-right {
+  flex: 2;
+  width: 100%;
+  background-color: #f4f4f4;
+  padding: 0 30px;
+  align-content: center;
+  justify-content: center;
+}
+
+
+
+
+
+/* Site Footer */
+.site-footer {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+
+}
+
+.top-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.footer-logo {
+  width: 50px;
+  height: 50px;
+}
+
+
+.icon-list {
+  display: flex;
+  list-style: none; /* Removes bullet points */
+  padding: 0;
+  margin: 0;
+}
+
+.icon-list li {
+  margin-left: 15px; /* Adds space between icons */
+}
+
+.icon-list img {
+  width: 30px; /* Adjust size as needed */
+  height: 30px;
+}
+
+
+
+/* FDS Footer */
+.fds-footer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  bottom: 0;
+  left: 0;
+  padding: 10px;
+  background-color: #fff; /* White background for footer */
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.tagline {
+  color: #35374B;
+  font-family: "Shantell Sans", cursive;
+  font-weight: lighter;
+  font-size: 1rem;
+  text-align: center;
+}
