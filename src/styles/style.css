@@ -1,7 +1,7 @@
 /* Default Resets */
 html, body {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 /* Root Container */
@@ -10,10 +10,9 @@ html, body {
   flex-direction: column;
   align-items: center;
   font-family: "Poppins", sans-serif;
-  font-optical-sizing: auto;
   height: 100%;
+  font-optical-sizing: auto;
 }
-
 
 /* Main App Components */
 button {
@@ -28,39 +27,44 @@ button {
   width: 100%;
   height: 105px;
   display: flex;
-  align-content: center;
+  align-items: center;
   justify-content: space-between;
   padding: 0 20px;
   box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-
 .site-header > img {
-  align-self: center;
   width: 100px;
   height: 100px;
   margin-left: 20px;
 }
 
 .site-header > nav {
-  align-self: center;
-  width: fit-content;
-  height: fit-content;
-  padding: 10px;
-  margin: 0;
-  margin-right: 25px;
-
+  display: flex;
 }
 
 .nav-list {
   display: flex;
-
 }
 
 .nav-list > li {
   list-style: none;
   margin-left: 20px;
-  
+}
+
+/* Hamburger Icon (hidden by default) */
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background-color: #35374B;
+  margin: 5px;
+  transition: 0.3s;
 }
 
 /* About Section */
@@ -72,14 +76,11 @@ button {
   height: 550px;
   gap: 3em;
   padding-top: 50px;
-
 }
 
-.biz-card >img {
+.biz-card > img {
   width: 160px;
   height: 225px;
-  align-self: center;
-  justify-self: center;
 }
 
 .about-textarea {
@@ -95,7 +96,8 @@ button {
   background-repeat: no-repeat;
   background-size: cover;
   height: 550px;
-  position: relative; /* Needed for the overlay */
+  position: relative;
+  color: black;
 }
 
 .outside-section::before {
@@ -105,66 +107,59 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #ffffff2b; /* Light overlay */
-  pointer-events: none; /* Allows interaction with content inside .outside-section */
+  background: #f6eaea42;
   z-index: 1;
 }
 
-
-.outside-left {
-  border: #35374B 2px solid;
-  width: 100%;
-  align-content: center;
-}
-
-.outside-left > h1 {
-  color: #fff;
+.outside-left, .outside-right {
   z-index: 2;
+
 }
 
-.outside-right {
-  border: #35374B 2px solid;
-  width: 100%;
-  align-content: center;
-}
-
-.outside-right > p {
-  color: #fff;
-  z-index: 2;
-}
-
-.outside-btn-area {
-  display: flex;
-  z-index: 2;
-}
-
-/* Contact Me Section */
+/* Contact Section */
 .contact-section {
   display: flex;
-  align-content: center;
   justify-content: space-between;
   width: 100%;
   height: 550px;
 }
 
-.contact-left {
+.contact-left, .contact-right {
   flex: 1;
-  width: 100%;
-  align-content: center;
-  justify-content: center;
-}
-.contact-right {
-  flex: 2;
-  width: 100%;
-  background-color: #f4f4f4;
   padding: 0 30px;
-  align-content: center;
-  justify-content: center;
 }
 
+.contact-right {
+  background-color: #f4f4f4;
+  width: 100%;
+}
 
+.contact-right > form {
+  height: 250px;
+  margin-top: 60px;
+  margin-left: 20px;
 
+}
 
+.contact-right > form > fieldset {
+  width: 350px;
+  margin-top: 10px;
+  border-radius: 8px;
+  
+}
+
+.contact-right > form > button {
+  margin-top: 15px;
+  height: 35px;
+  width: 100px;
+  background-color: purple;
+  border: none;
+  color: #fff;
+}
+
+.form-message {
+  height: 50px;
+}
 
 /* Site Footer */
 .site-footer {
@@ -225,3 +220,105 @@ button {
   font-size: 1rem;
   text-align: center;
 }
+
+
+/* Responsive Adjustments for Mobile */
+@media (max-width: 768px) {
+  .site-header {
+    justify-content: space-between;
+  }
+
+  /* Hide the nav list and show the hamburger on mobile */
+  .nav-list {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+    margin-right: 25px;
+  }
+
+  /* When the hamburger is clicked, show the menu */
+  .nav-list.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    width: 100%;
+  }
+
+  .nav-list > li {
+    margin-left: 0;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .about-section {
+    margin-top: 25px;
+    display: flex;
+    width: 85%;
+    height: fit-content;
+    align-self: center;
+    justify-items: center;
+    gap: 25px;
+  }
+
+  .biz-card {
+    align-self: center;
+  }
+
+  .about-textarea {
+    width: fit-content;
+  }
+
+  .about-textarea > h1 {
+    font-size: x-large;
+
+  }
+
+  .btn-area {
+    display: flex;
+    align-self: center;
+    gap: 5px;
+
+  }
+
+  .outside-section, .contact-section {
+    flex-direction: column;
+    height: auto;
+
+  }
+
+  .outside-section {
+    height: 28em;
+    background-position: 50%;
+    justify-content: center;
+  }
+
+  .outside-btn-area {
+    display: flex;
+    gap: 5px;
+    margin-top: 15%;
+  }
+
+  .about-section, .contact-section {
+    padding: 20px;
+  }
+
+  .outside-left, .outside-right {
+    width: 100%;
+    margin-left: 15px;
+  }
+
+  .outside-right {
+    width: 90%;
+  }
+
+
+}
+
+

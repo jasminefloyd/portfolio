@@ -6,9 +6,9 @@ export default function ContactMe() {
             </div> 
             <div className="contact-right">
                 <form>
-                    <fieldset>This is a field</fieldset>
-                    <fieldset>This is a field</fieldset>
-                    <fieldset>This is a field</fieldset>
+                    <fieldset>Name</fieldset>
+                    <fieldset>Email Address</fieldset>
+                    <fieldset className="form-message">Message</fieldset>
                     <button>Contact Me</button>
                 </form>
             </div> 
