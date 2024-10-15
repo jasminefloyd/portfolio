@@ -3,7 +3,7 @@ export default function AboutMe() {
 
         <div className="about-section">
             <div className="biz-card">
-                <img src="./src/assets/card_pc.png" />
+                <img src="./public/card_pc.png" />
             </div> 
             <div className="about-textarea">
                 <h1>Hey! I&apos;m Jasmine 👋🏽</h1>

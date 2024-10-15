@@ -92,7 +92,7 @@ button {
 .outside-section {
   display: flex;
   width: 100%;
-  background-image: url('../assets/lakers.jpeg');
+  background-image: url('/public/lakers.jpeg');
   background-repeat: no-repeat;
   background-size: cover;
   height: 550px;
