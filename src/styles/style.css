@@ -37,7 +37,7 @@ button {
 .site-header > img {
   width: 100px;
   height: 100px;
-  margin-left: 20px;
+  margin-left: 1rem;
 }
 
 .site-header > nav {
@@ -46,11 +46,12 @@ button {
 
 .nav-list {
   display: flex;
+  margin-right: 2rem;
 }
 
 .nav-list > li {
   list-style: none;
-  margin-left: 20px;
+  margin-left: 1.5rem;
 }
 
 /* Hamburger Icon (hidden by default) */
@@ -83,37 +84,23 @@ button {
   height: 225px;
 }
 
+.btn-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-area > button {
+  height: 35px;
+  width: 100px;
+  background-color: purple;
+  border: none;
+  color: #fff;
+}
+
 .about-textarea {
   display: flex;
   flex-direction: column;
-}
-
-/* Outside Work Section */
-.outside-section {
-  display: flex;
-  width: 100%;
-  background-image: url('/public/lakers.jpeg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 550px;
-  position: relative;
-  color: black;
-}
-
-.outside-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #f6eaea42;
-  z-index: 1;
-}
-
-.outside-left, .outside-right {
-  z-index: 2;
-
 }
 
 /* Contact Section */
@@ -163,11 +150,11 @@ button {
 
 /* Site Footer */
 .site-footer {
-  width: 100%;
+  width: 95%;
   height: fit-content;
   display: flex;
-  flex-direction: column;
-  padding: 20px 0;
+  padding: 15px 0;
+  justify-content: space-between;
 
 }
 
@@ -208,16 +195,12 @@ button {
   justify-content: center;
   bottom: 0;
   left: 0;
-  padding: 10px;
-  background-color: #fff; /* White background for footer */
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .tagline {
   color: #35374B;
-  font-family: "Shantell Sans", cursive;
   font-weight: lighter;
-  font-size: 1rem;
+  font-size: .9rem;
   text-align: center;
 }
 
@@ -235,7 +218,7 @@ button {
 
   .hamburger {
     display: block;
-    margin-right: 25px;
+    margin-right: 2rem;
   }
 
   /* When the hamburger is clicked, show the menu */
@@ -283,7 +266,8 @@ button {
   .btn-area {
     display: flex;
     align-self: center;
-    gap: 5px;
+    gap: 8px;
+    }
 
   }
 
