@@ -11,7 +11,7 @@ export default function AboutMe() {
                 </div>
             </div>
             <div className="biz-card">
-                <img src="./src/assets/me_ph.png" />
+                <img src="/assets/me_ph.png" />
             </div> 
         </div>
     )

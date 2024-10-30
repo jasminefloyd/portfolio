@@ -9,7 +9,7 @@ function Header() {
 
   return (
     <header className="site-header">
-      <img src="./src/assets/jf_logo.png" alt="Logo" />
+      <img src="/assets/jf_logo.png" alt="Logo" />
       <nav>
         <div className="hamburger" onClick={toggleMenu}>
           <div></div>
