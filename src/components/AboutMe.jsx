@@ -4,7 +4,7 @@ export default function AboutMe() {
         <div className="about-section">
             <div className="about-textarea">
                 <h1>Hey! I&apos;m Jasmine 👋🏽</h1>
-                <p>This is some text about me and what will display on the page</p>
+                <p>Lorem ipsum dolor sit amet consectetur. Nunc augue lorem facilisi ac lorem. Quam scelerisque vulputate proin blandit proin nisl magna sagittis turpis.</p>
                 <div className="btn-area">
                     <button>LinkedIn</button>
                     <button>Resume</button>
