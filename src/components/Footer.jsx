@@ -1,6 +1,7 @@
 import linkedinLogo from '../assets/linkedin.png';
 import githubLogo from '../assets/github.png';
 import resumeLogo from '../assets/file-alt.svg';
+import bizLogo from '../assets/jf_logo.png'
 
 
 export default function Footer() {
@@ -9,7 +10,7 @@ export default function Footer() {
 
     return (
         <div className="site-footer">
-            <img className="footer-logo" src="assets/jf_logo.png" />
+            <img className="footer-logo" src={bizLogo} />
             <p>&copy; All Rights Reserved {currentYear}</p>
             <div className="icon-tray">
                 <ul className="icon-list">              
