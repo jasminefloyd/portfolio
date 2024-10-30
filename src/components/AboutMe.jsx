@@ -1,3 +1,5 @@
+import profilePic from '../assets/me_ph.png';
+
 export default function AboutMe() {
     return (
 
@@ -11,7 +13,7 @@ export default function AboutMe() {
                 </div>
             </div>
             <div className="biz-card">
-                <img src="/assets/me_ph.png" />
+                <img src={profilePic} />
             </div> 
         </div>
     )

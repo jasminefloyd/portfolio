@@ -1,3 +1,7 @@
+import linkedinLogo from '../assets/linkedin.png';
+import githubLogo from '../assets/github.png';
+import resumeLogo from '../assets/file-alt.svg';
+
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -11,17 +15,17 @@ export default function Footer() {
                 <ul className="icon-list">              
                     <li className="linkedin">
                         <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-                            <img src="assets/linkedin.png" alt="LinkedIn" />
+                            <img src={linkedinLogo} alt="LinkedIn" />
                         </a>
                     </li>
                     <li className="github">
                         <a href="https://www.github.com" target="_blank" rel="noopener noreferrer">
-                            <img src="assets/github.png" alt="GitHub" />
+                            <img src={githubLogo} alt="GitHub" />
                         </a>
                     </li>
                     <li className="resy">
                         <a href="https://www.resy.com" target="_blank" rel="noopener noreferrer">
-                            <img src="assets/file-alt.svg" alt="Resy" />
+                            <img src={resumeLogo} alt="Resy" />
                         </a>
                     </li>
                 </ul>

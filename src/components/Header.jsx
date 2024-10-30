@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import mainLogoImg from '../assets/jf_logo.png';
+
+
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -9,7 +12,7 @@ function Header() {
 
   return (
     <header className="site-header">
-      <img src="/assets/jf_logo.png" alt="Logo" />
+      <img src={mainLogoImg} alt="Logo" />
       <nav>
         <div className="hamburger" onClick={toggleMenu}>
           <div></div>
