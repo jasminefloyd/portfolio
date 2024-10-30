@@ -72,15 +72,14 @@ button {
 .about-section {
   display: flex;
   align-content: center;
-  justify-content: center;
   width: 100%;
   height: 550px;
-  gap: 3em;
+  gap: 15em;
   padding-top: 50px;
 }
 
 .biz-card > img {
-  margin-top: 200px;
+  margin-top: 150px;
   margin-left: 95px;
   width: 160px;
   height: 225px;
@@ -94,17 +93,30 @@ button {
   padding: 10px;
 }
 
-.btn-area > button {
-  height: 35px;
-  width: 100px;
-  background-color: purple;
+.btnA, .btnB {
+  height: 40px;
+  width: 172px;
+  border-radius: 10px;
+  line-height: auto;
+  letter-spacing: 0%;
+  font-size: 16px;
+}
+
+.btnA {
+  background-color: #3871A7;
   border: none;
   color: #fff;
 }
 
+.btnB {
+  background-color: #f8f8f8;
+  color: #3871A7;
+  border: 1px solid #3871A7;
+}
+
 .about-textarea {
-  margin-left: 50px;
-  margin-top: 150px;
+  margin-left: 250px;
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
 }
@@ -122,29 +134,25 @@ button {
   line-height: 30px;
   letter-spacing: 5%;
   text-align: left;
+  width: 600px;
+  height: 86px;
 }
 
 /* Contact Section */
 .contact-section {
-  display: none;
-  justify-content: space-between;
+  border-top: #35374B .5px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   height: 550px;
-}
-
-.contact-left, .contact-right {
-  flex: 1;
-  padding: 0 30px;
-}
-
-.contact-right {
-  background-color: #f4f4f4;
-  width: 100%;
+  margin-top: 50px;
 }
 
 .contact-right > form {
   height: 250px;
-  margin-top: 60px;
+  width: 100%;
+  margin-top: 10px;
   margin-left: 20px;
 
 }
@@ -166,8 +174,10 @@ button {
 }
 
 .form-message {
-  height: 50px;
+  height: 65px;
 }
+
+
 
 /* Site Footer */
 .site-footer {
@@ -262,66 +272,49 @@ button {
   }
 
   .about-section {
-    margin-top: 25px;
     display: flex;
-    width: 85%;
-    height: fit-content;
-    align-self: center;
-    justify-items: center;
-    gap: 25px;
+    width: 350px;
+    justify-content: center;
+    margin-left: 50px;
   }
 
-  .biz-card {
-    align-self: center;
-  }
-
-  .about-textarea {
-    width: fit-content;
+  .biz-card > img {
+    top: 0%;
+    left: 10%;
+    position: absolute;
+    height: 50px;
+    width: 50px;
   }
 
   .about-textarea > h1 {
-    font-size: x-large;
-
+    margin: 0;
+    padding: 10px;
+    font-size: 30px;
   }
+  
+  .about-textarea > p {
+    margin: 0;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 25px;
+    letter-spacing: 3%;
+    text-align: left;
+    width: 400px;
+  }
+
 
   .btn-area {
     display: flex;
-    align-self: center;
     gap: 8px;
-    }
-
   }
 
-  .outside-section, .contact-section {
-    flex-direction: column;
-    height: auto;
-
+  .btnA, .btnB {
+    height: 30px;
+    width: 132px;
+    border-radius: 10px;
+    line-height: auto;
+    letter-spacing: 0%;
+    font-size: 12px;
   }
 
-  .outside-section {
-    height: 28em;
-    background-position: 50%;
-    justify-content: center;
-  }
-
-  .outside-btn-area {
-    display: flex;
-    gap: 5px;
-    margin-top: 15%;
-  }
-
-  .about-section, .contact-section {
-    padding: 20px;
-  }
-
-  .outside-left, .outside-right {
-    width: 100%;
-    margin-left: 15px;
-  }
-
-  .outside-right {
-    width: 90%;
-  }
-
-
-
+}
