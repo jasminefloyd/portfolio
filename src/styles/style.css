@@ -16,22 +16,6 @@ html, body {
   font-optical-sizing: auto;
 }
 
-/* Main App Components */
-button {
-  width: 140px;
-  height: 50px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(135deg, #3871A7, #53A0E2);
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-button:hover {
-  background: linear-gradient(135deg, #28547A, #3871A7);
-}
-
 /* Site Header */
 .site-header {
   width: 100%;
@@ -121,6 +105,9 @@ button:hover {
 }
 
 .btnA, .btnB {
+  background: linear-gradient(135deg, #3871A7, #53A0E2);
+  border: none;
+  color: #fff;
   height: 45px;
   width: 180px;
   border-radius: 8px;
@@ -128,21 +115,15 @@ button:hover {
   font-weight: bold;
   transition: transform 0.3s ease;
   cursor: pointer;
-}
-
-.btnA {
-  background-color: #3871A7;
-  border: none;
-  color: #fff;
-}
-
-.btnB {
-  background-color: #3871A7;
-  border: none;
-  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btnA:hover, .btnB:hover {
+  background: linear-gradient(135deg, #28547A, #3871A7);
   transform: scale(1.05);
 }
 
@@ -176,6 +157,7 @@ button:hover {
   width: 100%;
   padding: 60px 20px;
   background-color: #fff;
+  scroll-behavior: smooth;
 }
 
 .contact-section > form {
@@ -206,6 +188,7 @@ button:hover {
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease;
+  border-radius: 20px;
 }
 
 .contact-section > form > button:hover {

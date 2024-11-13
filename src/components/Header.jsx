@@ -22,7 +22,7 @@ function Header() {
         <ul className={`nav-list ${menuOpen ? "active" : ""}`}>
           <li><a href="#">Blog</a></li>
           <li><a href="#">Resume</a></li>
-          <li><a href="#">Contact Me</a></li>
+          <li><a href="#contact-section">Contact Me</a></li>
         </ul>
       </nav>
     </header>

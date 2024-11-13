@@ -1,6 +1,6 @@
 export default function ContactMe() {
     return (
-        <div className="contact-section">
+        <div className="contact-section" id="contact-section">
             <h1>Get in touch with me</h1>
             <form>
                 <fieldset>Name</fieldset>

@@ -25,7 +25,7 @@ export default function Footer() {
                         </a>
                     </li>
                     <li className="resy">
-                        <a href="https://www.resy.com" target="_blank" rel="noopener noreferrer">
+                        <a href="#" target="_blank" rel="noopener noreferrer">
                             <img src={resumeLogo} alt="Resy" />
                         </a>
                     </li>
