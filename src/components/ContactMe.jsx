@@ -18,7 +18,7 @@ export default function ContactMe() {
         e.preventDefault();
 
         // Google Form action URL
-        const googleFormUrl = "https://docs.google.com/forms/d/1Ub-on-T42JiFn6CNfKIb5MNMB8mQSvpe-DYhosS8Mgk";
+        const googleFormUrl = "https://docs.google.com/forms/d/1Ub-on-T42JiFn6CNfKIb5MNMB8mQSvpe-DYhosS8Mgk/formResponse";
 
         // Map your form fields to Google Form input names
         const formBody = new URLSearchParams({
