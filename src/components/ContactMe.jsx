@@ -57,7 +57,7 @@ export default function ContactMe() {
                 </div>
             ) : (
                 <div>
-                    <h1>Get in touch with me</h1>
+                    <h1 className='form-header'>Get in touch with me</h1>
                     <form onSubmit={handleSubmit}>
                         <fieldset>
                             <label>Name</label>

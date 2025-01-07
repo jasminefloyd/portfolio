@@ -485,9 +485,15 @@ html, body {
     justify-content: space-between;
   }
 
+  .site-header > img {
+    width: 120px;
+    height: auto;
+    margin-left: -1rem;
+  }
+
   .hamburger {
     display: block;
-    margin-right: 2rem;
+    margin-right: 5.5rem;
   }
 
   .nav-list {
@@ -555,14 +561,29 @@ html, body {
     width: 150px;
   }
 
-  
   .contact-section {
-    padding: 40px 20px;
+    padding: 40px 15px;
   }
 
-  .contact-section > form {
-    width: 80%;
+  .contact-section > div > form {
+    padding: 20px;
+    width: 100%;
+    margin-left: -2.5em;
   }
+
+  .contact-section > div > h1 {
+    margin-right: 1.5em;
+  }
+
+  .contact-section > div > form > fieldset {
+    padding: 8px; /* Slightly reduce padding for compact layout */
+  }
+
+  .contact-section > div > form > button {
+    width: 100%; /* Make button span full width */
+    max-width: none; /* Remove max-width restriction */
+  }
+
 
   .site-footer {
     padding: 30px 20px;
