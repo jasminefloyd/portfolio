@@ -1,7 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import mainLogoImg from '../assets/jf_logo.png';
-
-
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,8 +19,10 @@ function Header() {
           <div></div>
         </div>
         <ul className={`nav-list ${menuOpen ? "active" : ""}`}>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Resume</a></li>
+          {/* Replace href with Link components */}
+          <li><Link to="/portfolio">🏠 Home</Link></li>
+          <li><Link to="/blog">Blog</Link></li>
+          <li><Link to="/resume">Resume</Link></li>
           <li><a href="#contact-section">Contact Me</a></li>
         </ul>
       </nav>

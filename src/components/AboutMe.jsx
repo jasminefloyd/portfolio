@@ -6,10 +6,10 @@ export default function AboutMe() {
         <div className="about-section">
             <div className="about-textarea">
                 <h1>Hey! I&apos;m Jasmine 👋🏽</h1>
-                <p>Lorem ipsum dolor sit amet consectetur. Nunc augue lorem facilisi ac lorem. Quam scelerisque vulputate proin blandit proin nisl magna sagittis turpis.</p>
+                <p>I’m passionate about solving users’ problems and building products that improve the experience of the people who use them. <br></br><br></br>I'm a thinker, tinkerer, novice react engineer, and sports lover!</p>
                 <div className="btn-area">
                     <a href="https://www.linkedin.com/in/jasmine-floyd/" class="btnA">LinkedIn</a>
-                    <a href="#" class="btnB">Resume</a>
+                    <a href="/portfolio/resume.pdf" class="btnB">Resume</a>
                 </div>
             </div>
             <div className="biz-card">
