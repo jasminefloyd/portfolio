@@ -6,8 +6,15 @@ import ContactMe from './components/ContactMe';
 import FDSFooter from './components/FDSFooter';
 import Blog from './components/Blog';
 import Resume from './components/Resume';
+import React, { useEffect } from "react";
+import { initGA, logPageView } from "./components/Tracker";
 
 function App() {
+  useEffect(() => {
+    initGA();
+    logPageView();
+  }, []);
+
   return (
     <Router>
       <Header />
