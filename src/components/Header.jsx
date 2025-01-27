@@ -21,7 +21,7 @@ function Header() {
         <ul className={`nav-list ${menuOpen ? "active" : ""}`}>
           {/* Replace href with Link components */}
           <li><Link to="/portfolio">🏠 Home</Link></li>
-          <li><Link to="/blog">Blog</Link></li>
+          <li className="blog-nav"><Link to="/blog">Blog</Link></li>
           <li><Link to="/resume">Resume</Link></li>
           <li><a href="#contact-section">Contact Me</a></li>
         </ul>

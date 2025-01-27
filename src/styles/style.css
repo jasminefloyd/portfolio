@@ -7,6 +7,12 @@ html, body {
   color: #35374B;
 }
 
+/*********** Temp Code Area ***********/
+.blog-nav {
+  display: none;
+}
+/*********** Temp Code Area ***********/
+
 /* Root Container */
 .container {
   flex-direction: column;
