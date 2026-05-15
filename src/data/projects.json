@@ -1,0 +1,167 @@
+{
+  "categories": ["Internal Tools", "Production Builds", "Capstone + Learning"],
+  "projects": [
+    {
+      "id": "internal-slack-summarizer",
+      "title": "Slack Thread Summarizer",
+      "category": "Internal Tools",
+      "description": "An internal tool that summarizes long Slack threads into concise action items using Claude. Reduced meeting follow-up time by 40% across the product team.",
+      "role": "Product Lead & Prompt Engineer",
+      "techStack": ["React", "Node.js", "Claude API", "Slack API"],
+      "aiAgentArch": "Single summarization agent with a structured output prompt. Input: raw thread JSON. Output: JSON with summary, action items, and owners. Deployed as a Slack slash command.",
+      "outcomes": [
+        "Reduced post-meeting follow-up time by ~40%",
+        "Adopted by 3 internal teams within 2 weeks of launch",
+        "Average summary generated in under 4 seconds"
+      ],
+      "links": {
+        "github": null,
+        "demo": null
+      }
+    },
+    {
+      "id": "internal-doc-qa",
+      "title": "Internal Doc Q&A Bot",
+      "category": "Internal Tools",
+      "description": "A RAG-powered chatbot that answers questions about internal product documentation. Eliminated repetitive questions to the product team by 60%.",
+      "role": "Product Manager & Systems Designer",
+      "techStack": ["Python", "LangChain", "Pinecone", "Streamlit", "OpenAI"],
+      "aiAgentArch": "Retrieval-Augmented Generation pipeline: documents chunked and embedded into Pinecone, retrieved on query, passed to GPT-4 for synthesis with source citations.",
+      "outcomes": [
+        "Reduced repetitive documentation questions by ~60%",
+        "Indexed 200+ internal documents at launch",
+        "Response accuracy rated 4.2/5 by internal users"
+      ],
+      "links": {
+        "github": null,
+        "demo": null
+      }
+    },
+    {
+      "id": "internal-sprint-reporter",
+      "title": "Automated Sprint Reporter",
+      "category": "Internal Tools",
+      "description": "A tool that auto-generates weekly sprint reports from Jira data using AI, formatted for executive stakeholders.",
+      "role": "Product Manager & Developer",
+      "techStack": ["React", "Supabase", "Claude API", "Jira API"],
+      "aiAgentArch": null,
+      "outcomes": [
+        "Saved 2 hours per sprint cycle in report preparation",
+        "Adopted by 2 engineering teams",
+        "Stakeholder satisfaction with report clarity improved"
+      ],
+      "links": {
+        "github": null,
+        "demo": null
+      }
+    },
+    {
+      "id": "prod-ai-writing-assistant",
+      "title": "AI Writing Assistant for PMs",
+      "category": "Production Builds",
+      "description": "A production SaaS tool that helps product managers write PRDs, user stories, and release notes using AI. Launched to 200+ beta users.",
+      "role": "Founder & Product Manager",
+      "techStack": ["Next.js", "Supabase", "Claude API", "Stripe", "Vercel"],
+      "aiAgentArch": "Multi-mode agent with specialized prompts per document type (PRD, user story, release note). Context-aware — feeds in the user's previous documents to maintain voice consistency.",
+      "outcomes": [
+        "200+ beta users in first 30 days",
+        "4.7/5 average user rating",
+        "Reduced PRD drafting time from ~3 hours to ~45 minutes"
+      ],
+      "links": {
+        "github": null,
+        "demo": "https://example.com"
+      }
+    },
+    {
+      "id": "prod-feedback-analyzer",
+      "title": "Customer Feedback Analyzer",
+      "category": "Production Builds",
+      "description": "A production tool that ingests customer support tickets and reviews, clusters them by theme, and surfaces prioritized product insights.",
+      "role": "Product Lead & ML Integrations",
+      "techStack": ["React", "FastAPI", "OpenAI Embeddings", "Supabase", "Vercel"],
+      "aiAgentArch": "Two-agent pipeline: (1) Classifier agent tags each ticket with category and sentiment. (2) Synthesis agent groups clusters and generates a prioritized insight report with recommended actions.",
+      "outcomes": [
+        "Processed 10,000+ tickets at launch",
+        "Reduced time-to-insight from 5 days to 4 hours",
+        "Identified 3 critical product bugs missed by manual review"
+      ],
+      "links": {
+        "github": "https://github.com/yourhandle/feedback-analyzer",
+        "demo": null
+      }
+    },
+    {
+      "id": "prod-onboarding-copilot",
+      "title": "Onboarding Copilot",
+      "category": "Production Builds",
+      "description": "An in-app AI assistant that guides new users through product setup with personalized step-by-step prompts based on their use case.",
+      "role": "Product Manager",
+      "techStack": ["React", "Supabase", "Claude API"],
+      "aiAgentArch": null,
+      "outcomes": [
+        "Improved 7-day activation rate by 28%",
+        "Reduced support tickets from new users by 35%",
+        "Average time-to-first-value dropped from 12 minutes to 5 minutes"
+      ],
+      "links": {
+        "github": null,
+        "demo": null
+      }
+    },
+    {
+      "id": "capstone-agent-framework",
+      "title": "Multi-Agent Orchestration Framework",
+      "category": "Capstone + Learning",
+      "description": "A capstone project exploring multi-agent orchestration patterns. Built a framework for chaining specialized agents with handoff protocols and failure recovery.",
+      "role": "Solo Builder",
+      "techStack": ["Python", "LangGraph", "Claude API", "FastAPI"],
+      "aiAgentArch": "LangGraph-based orchestrator managing 4 specialized agents: Research, Drafting, Review, and Formatting. Each agent has defined input/output contracts. Supervisor agent handles routing and retry logic on failure.",
+      "outcomes": [
+        "Completed as part of AI PM certification program",
+        "Framework open-sourced with 40+ GitHub stars",
+        "Published a writeup on Substack covering the architecture decisions"
+      ],
+      "links": {
+        "github": "https://github.com/yourhandle/agent-framework",
+        "demo": null
+      }
+    },
+    {
+      "id": "capstone-rag-evaluation",
+      "title": "RAG Evaluation Toolkit",
+      "category": "Capstone + Learning",
+      "description": "A learning project building a systematic evaluation toolkit for RAG pipelines — measuring retrieval quality, answer faithfulness, and hallucination rate.",
+      "role": "Solo Researcher & Builder",
+      "techStack": ["Python", "OpenAI", "Pinecone", "RAGAS", "Jupyter"],
+      "aiAgentArch": null,
+      "outcomes": [
+        "Evaluated 3 different chunking strategies across a 500-document corpus",
+        "Documented findings in a public Substack post",
+        "Toolkit used in subsequent production RAG build"
+      ],
+      "links": {
+        "github": "https://github.com/yourhandle/rag-eval",
+        "demo": null
+      }
+    },
+    {
+      "id": "capstone-pm-ai-certification",
+      "title": "AI Product Management Certification",
+      "category": "Capstone + Learning",
+      "description": "Completed a structured AI PM certification covering LLM fundamentals, prompt engineering, AI product strategy, and responsible AI practices.",
+      "role": "Student & Project Lead",
+      "techStack": ["Claude API", "OpenAI API", "Python", "React"],
+      "aiAgentArch": null,
+      "outcomes": [
+        "Completed 8 hands-on project modules",
+        "Final capstone project scored in the top 10% of cohort",
+        "Applied learnings directly to 3 subsequent production builds"
+      ],
+      "links": {
+        "github": null,
+        "demo": null
+      }
+    }
+  ]
+}
