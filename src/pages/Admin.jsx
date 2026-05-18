@@ -3,10 +3,12 @@ import AdminLogin from '../components/admin/AdminLogin'
 import VisitorStats from '../components/admin/VisitorStats'
 import EventStats from '../components/admin/EventStats'
 import MessagesInbox from '../components/admin/MessagesInbox'
+import ProjectManager from '../components/admin/ProjectManager'
 
 export default function Admin() {
   const isAuthed = sessionStorage.getItem('admin_auth') === 'true'
   const [authed, setAuthed] = useState(isAuthed)
+  const [tab, setTab] = useState('analytics')
 
   function handleLogin(password) {
     if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
@@ -27,8 +29,8 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-bg px-6 py-12 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-12">
+    <div className="min-h-screen bg-bg px-4 sm:px-6 py-8 sm:py-12 max-w-6xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 sm:mb-12">
         <h1 className="font-display text-2xl text-text-primary">
           Admin Dashboard
         </h1>
@@ -41,9 +43,30 @@ export default function Admin() {
       </div>
 
       <div className="space-y-12">
-        <VisitorStats />
-        <EventStats />
-        <MessagesInbox />
+        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
+          <button
+            onClick={() => setTab('analytics')}
+            className={`text-sm px-3 py-1.5 rounded ${tab === 'analytics' ? 'bg-text-primary text-surface' : 'border border-border text-text-secondary'}`}
+          >
+            Analytics
+          </button>
+          <button
+            onClick={() => setTab('projects')}
+            className={`text-sm px-3 py-1.5 rounded ${tab === 'projects' ? 'bg-text-primary text-surface' : 'border border-border text-text-secondary'}`}
+          >
+            Manage Projects
+          </button>
+        </div>
+
+        {tab === 'analytics' ? (
+          <>
+            <VisitorStats />
+            <EventStats />
+            <MessagesInbox />
+          </>
+        ) : (
+          <ProjectManager />
+        )}
       </div>
     </div>
   )

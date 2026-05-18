@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '../../lib/supabaseClient'
+import { fetchAdminData, updateMessageRead } from '../../lib/adminApi'
 import AdminPanel from './AdminPanel'
 import { useAdminData } from '../../hooks/useAdminData'
 
@@ -8,12 +8,7 @@ export default function MessagesInbox() {
   const [markingRead, setMarkingRead] = useState({})
 
   async function loadMessages() {
-    const { data, error: err } = await supabase
-      .from('messages')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (err) throw new Error('Failed to load messages')
+    const data = await fetchAdminData('messages', { orderBy: 'created_at', ascending: false })
     return data || []
   }
 
@@ -28,16 +23,10 @@ export default function MessagesInbox() {
     setMarkingRead((prev) => ({ ...prev, [messageId]: true }))
 
     try {
-      const { error: err } = await supabase
-        .from('messages')
-        .update({ read: !currentRead })
-        .eq('id', messageId)
-
-      if (!err) {
-        setMessages((prev) =>
-          prev.map((m) => (m.id === messageId ? { ...m, read: !currentRead } : m))
-        )
-      }
+      await updateMessageRead(messageId, !currentRead)
+      setMessages((prev) =>
+        prev.map((m) => (m.id === messageId ? { ...m, read: !currentRead } : m))
+      )
     } catch {
       console.error('Failed to update message read status')
     } finally {
@@ -59,7 +48,7 @@ export default function MessagesInbox() {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`border rounded-lg p-4 flex gap-4 ${
+            className={`border rounded-lg p-3 sm:p-4 flex gap-3 sm:gap-4 ${
               msg.read ? 'bg-bg opacity-70' : 'bg-surface border-accent'
             }`}
           >
@@ -68,7 +57,7 @@ export default function MessagesInbox() {
             )}
 
             <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                 <div>
                   <p className={`font-sans ${msg.read ? 'font-normal' : 'font-semibold'} text-sm text-text-primary`}>
                     {msg.name}
@@ -77,7 +66,7 @@ export default function MessagesInbox() {
                     {msg.email}
                   </p>
                 </div>
-                <span className="font-sans text-xs text-text-secondary whitespace-nowrap ml-2">
+                <span className="font-sans text-xs text-text-secondary sm:whitespace-nowrap sm:ml-2">
                   {new Date(msg.created_at).toLocaleDateString()} at{' '}
                   {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>

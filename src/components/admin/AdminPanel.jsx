@@ -1,6 +1,6 @@
 export default function AdminPanel({ title, loading, error, empty, children }) {
   return (
-    <div className="bg-surface border border-border rounded-lg p-6">
+    <div className="bg-surface border border-border rounded-lg p-4 sm:p-6">
       {title && (
         <p className="font-sans text-xs uppercase tracking-wider text-text-secondary mb-4">
           {title}

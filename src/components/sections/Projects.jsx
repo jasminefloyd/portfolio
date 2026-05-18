@@ -8,21 +8,22 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(null)
 
   return (
-    <section className="px-6 py-20 max-w-6xl mx-auto w-full">
-      <h2 className="font-display text-3xl text-text-primary mb-16">
+    <section className="projects-surface px-5 sm:px-6 py-16 sm:py-24 max-w-6xl mx-auto w-full rounded-[1.5rem] sm:rounded-[2rem]">
+      <h2 className="font-display text-3xl md:text-4xl text-text-primary mb-12 sm:mb-16">
         Projects
       </h2>
 
-      {categories.map((category) => (
-        <div key={category} className="mb-12">
-          <h3 className="font-sans text-sm uppercase tracking-wider text-text-secondary mb-8">
+      {categories.map((category, categoryIndex) => (
+        <div key={category} className="mb-16 last:mb-0">
+          <h3 className="font-sans text-base uppercase tracking-[0.14em] text-text-secondary mb-8">
             {category}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {getByCategory(category).map((project) => (
+            {getByCategory(category).map((project, projectIndex) => (
               <ProjectCard
                 key={project.id}
                 project={project}
+                index={categoryIndex * 3 + projectIndex}
                 onClick={() => setSelectedProject(project)}
               />
             ))}

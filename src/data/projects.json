@@ -1,9 +1,9 @@
 {
-  "categories": ["Internal Tools", "Production Builds", "Capstone + Learning"],
+  "categories": ["Production Builds", "Internal Tools", "Capstone + Learning"],
   "projects": [
     {
       "id": "internal-slack-summarizer",
-      "title": "Slack Thread Summarizer",
+      "title": "Looking Glass",
       "category": "Internal Tools",
       "description": "An internal tool that summarizes long Slack threads into concise action items using Claude. Reduced meeting follow-up time by 40% across the product team.",
       "role": "Product Lead & Prompt Engineer",
@@ -21,7 +21,7 @@
     },
     {
       "id": "internal-doc-qa",
-      "title": "Internal Doc Q&A Bot",
+      "title": "Onsite Trip Planner",
       "category": "Internal Tools",
       "description": "A RAG-powered chatbot that answers questions about internal product documentation. Eliminated repetitive questions to the product team by 60%.",
       "role": "Product Manager & Systems Designer",
@@ -39,7 +39,7 @@
     },
     {
       "id": "internal-sprint-reporter",
-      "title": "Automated Sprint Reporter",
+      "title": "[Placeholder] Project",
       "category": "Internal Tools",
       "description": "A tool that auto-generates weekly sprint reports from Jira data using AI, formatted for executive stakeholders.",
       "role": "Product Manager & Developer",
@@ -57,7 +57,7 @@
     },
     {
       "id": "prod-ai-writing-assistant",
-      "title": "AI Writing Assistant for PMs",
+      "title": "AI Onboarding Engine",
       "category": "Production Builds",
       "description": "A production SaaS tool that helps product managers write PRDs, user stories, and release notes using AI. Launched to 200+ beta users.",
       "role": "Founder & Product Manager",
@@ -75,7 +75,7 @@
     },
     {
       "id": "prod-feedback-analyzer",
-      "title": "Customer Feedback Analyzer",
+      "title": "Popmenu AI Assistant",
       "category": "Production Builds",
       "description": "A production tool that ingests customer support tickets and reviews, clusters them by theme, and surfaces prioritized product insights.",
       "role": "Product Lead & ML Integrations",
@@ -93,7 +93,7 @@
     },
     {
       "id": "prod-onboarding-copilot",
-      "title": "Onboarding Copilot",
+      "title": "[Placeholder] Project",
       "category": "Production Builds",
       "description": "An in-app AI assistant that guides new users through product setup with personalized step-by-step prompts based on their use case.",
       "role": "Product Manager",
@@ -111,7 +111,7 @@
     },
     {
       "id": "capstone-agent-framework",
-      "title": "Multi-Agent Orchestration Framework",
+      "title": "PricePilot",
       "category": "Capstone + Learning",
       "description": "A capstone project exploring multi-agent orchestration patterns. Built a framework for chaining specialized agents with handoff protocols and failure recovery.",
       "role": "Solo Builder",
@@ -129,7 +129,7 @@
     },
     {
       "id": "capstone-rag-evaluation",
-      "title": "RAG Evaluation Toolkit",
+      "title": "Resy Passport",
       "category": "Capstone + Learning",
       "description": "A learning project building a systematic evaluation toolkit for RAG pipelines — measuring retrieval quality, answer faithfulness, and hallucination rate.",
       "role": "Solo Researcher & Builder",
@@ -147,7 +147,7 @@
     },
     {
       "id": "capstone-pm-ai-certification",
-      "title": "AI Product Management Certification",
+      "title": "RunScene AI",
       "category": "Capstone + Learning",
       "description": "Completed a structured AI PM certification covering LLM fundamentals, prompt engineering, AI product strategy, and responsible AI practices.",
       "role": "Student & Project Lead",

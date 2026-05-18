@@ -16,8 +16,8 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <a href="#hero" className="hover:opacity-80 transition-opacity scale-150 origin-left">
-            <img src="/logo.png" alt="Jasmine Floyd" className="h-8 w-auto" />
+          <a href="#hero" className="relative h-8 w-20 hover:opacity-80 transition-opacity overflow-visible">
+            <img src="/logo.png" alt="Jasmine Floyd" className="absolute left-0 top-1/2 h-16 w-auto -translate-y-1/2" />
           </a>
 
           {/* Desktop Nav */}

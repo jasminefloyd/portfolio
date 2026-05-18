@@ -1,16 +1,11 @@
-import { supabase } from '../../lib/supabaseClient'
+import { fetchAdminData } from '../../lib/adminApi'
 import AdminPanel from './AdminPanel'
 import { useAdminData } from '../../hooks/useAdminData'
 
 export default function VisitorStats() {
   async function loadStats() {
-    const { data: visitors, error: err1 } = await supabase.from('visitors').select('*')
-    const { data: countries, error: err2 } = await supabase
-      .from('visitors')
-      .select('country')
-      .not('country', 'is', null)
-
-    if (err1 || err2) throw new Error('Failed to load visitor data')
+    const visitors = await fetchAdminData('visitors')
+    const countries = visitors.filter((v) => v.country)
 
     const totalVisitors = visitors?.length || 0
 

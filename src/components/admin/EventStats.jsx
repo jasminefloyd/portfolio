@@ -1,12 +1,10 @@
-import { supabase } from '../../lib/supabaseClient'
+import { fetchAdminData } from '../../lib/adminApi'
 import AdminPanel from './AdminPanel'
 import { useAdminData } from '../../hooks/useAdminData'
 
 export default function EventStats() {
   async function loadStats() {
-    const { data: events, error: err } = await supabase.from('events').select('*')
-
-    if (err) throw new Error('Failed to load event data')
+    const events = await fetchAdminData('events')
 
     const resumeDownloads = events?.filter((e) => e.event_type === 'resume_download').length || 0
     const projectOpens = events?.filter((e) => e.event_type === 'project_open').length || 0

@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Certified Product Manager (CPM)",
+    "issuer": "AIPMM",
+    "issued": "2018",
+    "credentialId": "AIPMM-CPM-2018"
+  },
+  {
+    "title": "Pragmatic Marketing PMC-V",
+    "issuer": "Pragmatic Institute",
+    "issued": "2018",
+    "credentialId": "PRAGMATIC-PMCV-2018"
+  },
+  {
+    "title": "SLII Leadership Certification",
+    "issuer": "Blanchard",
+    "issued": "2022",
+    "credentialId": "BLANCHARD-SLII-2022"
+  },
+  {
+    "title": "Radical Product Thinking",
+    "issuer": "Product School",
+    "issued": "2022",
+    "credentialId": "PS-RPT-2022"
+  },
+  {
+    "title": "AI Product Management Certification",
+    "issuer": "Product Faculty",
+    "issued": "2025",
+    "credentialId": "PF-AIPM-2025"
+  },
+  {
+    "title": "AI Product Leadership Certification",
+    "issuer": "Product Faculty",
+    "issued": "In Progress",
+    "credentialId": "PF-AIPL-INPROGRESS"
+  }
+]

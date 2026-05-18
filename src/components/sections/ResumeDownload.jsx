@@ -17,7 +17,7 @@ export default function ResumeDownload() {
       await trackEvent('resume_download', null)
       const a = document.createElement('a')
       a.href = '/resume.pdf'
-      a.download = 'resume.pdf'
+      a.download = 'jasminefloyd-resume.pdf'
       a.click()
     } catch {
       setUnavailable(true)

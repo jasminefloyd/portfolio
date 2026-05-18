@@ -21,11 +21,13 @@ export async function trackVisitor() {
   }
 
   const params = new URLSearchParams(window.location.search)
+  const visitorId = crypto.randomUUID()
 
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('visitors')
       .insert({
+        id: visitorId,
         ...locationData,
         referrer: document.referrer || null,
         utm_source: params.get('utm_source'),
@@ -33,15 +35,13 @@ export async function trackVisitor() {
         utm_campaign: params.get('utm_campaign'),
         user_agent: navigator.userAgent,
       })
-      .select('id')
-      .single()
 
     if (error) {
       console.warn('[analytics] Failed to track visitor:', error.message)
       return
     }
 
-    sessionStorage.setItem('visitor_id', data.id)
+    sessionStorage.setItem('visitor_id', visitorId)
   } catch {
     console.warn('[analytics] trackVisitor threw unexpectedly')
   }
