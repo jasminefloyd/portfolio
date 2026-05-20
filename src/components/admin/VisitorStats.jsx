@@ -40,7 +40,18 @@ export default function VisitorStats() {
       .slice(0, 5)
       .map(([source, count]) => ({ source, count }))
 
-    return { totalVisitors, topCountries, topReferrers, topSources }
+    const recentVisitors = visitors
+      ?.slice(0, 10)
+      .map((v) => ({
+        id: v.id,
+        user_id: v.user_id || 'unknown',
+        location: [v.city, v.state].filter(Boolean).join(', ') || 'Unknown',
+        source: v.referrer || 'Direct',
+        utm: v.utm_source || '-',
+        created_at: v.created_at,
+      })) || []
+
+    return { totalVisitors, topCountries, topReferrers, topSources, recentVisitors }
   }
 
   const { data: stats, loading, error } = useAdminData(loadStats)
@@ -102,6 +113,21 @@ export default function VisitorStats() {
               <li key={referrer} className="flex justify-between text-sm font-sans border-b border-border py-2">
                 <span className="text-text-primary truncate">{referrer}</span>
                 <span className="text-text-secondary ml-2">{count}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {stats.recentVisitors.length > 0 && (
+        <div className="mt-8">
+          <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
+            Recent Visitors
+          </h4>
+          <ul className="space-y-2">
+            {stats.recentVisitors.map((visitor) => (
+              <li key={visitor.id} className="text-sm font-sans border-b border-border py-2 text-text-primary">
+                {visitor.user_id} | {visitor.location} | {visitor.source} | UTM: {visitor.utm} | {new Date(visitor.created_at).toLocaleString()}
               </li>
             ))}
           </ul>

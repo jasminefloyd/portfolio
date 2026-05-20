@@ -1,8 +1,21 @@
 import { supabase } from './supabaseClient'
 
+const VISITOR_SESSION_KEY = 'visitor_id'
+const USER_ID_KEY = 'portfolio_user_id'
+const SESSION_START_KEY = 'profile_session_start'
+const SESSION_TRACKED_KEY = 'profile_session_tracked'
+
+function getOrCreateUserId() {
+  const existing = localStorage.getItem(USER_ID_KEY)
+  if (existing) return existing
+  const generated = crypto.randomUUID()
+  localStorage.setItem(USER_ID_KEY, generated)
+  return generated
+}
+
 export async function trackVisitor() {
-  if (!supabase) return
-  if (sessionStorage.getItem('visitor_id')) return
+  if (!supabase) return null
+  if (sessionStorage.getItem(VISITOR_SESSION_KEY)) return sessionStorage.getItem(VISITOR_SESSION_KEY)
 
   let locationData = {}
 
@@ -14,7 +27,12 @@ export async function trackVisitor() {
 
     if (res.ok) {
       const json = await res.json()
-      locationData = { ip_address: json.ip, country: json.country_name, city: json.city }
+      locationData = {
+        ip_address: json.ip,
+        country: json.country_name,
+        city: json.city,
+        state: json.region,
+      }
     }
   } catch {
     console.warn('[analytics] Location lookup failed — continuing without location data')
@@ -22,36 +40,67 @@ export async function trackVisitor() {
 
   const params = new URLSearchParams(window.location.search)
   const visitorId = crypto.randomUUID()
+  const userId = getOrCreateUserId()
 
   try {
     const { error } = await supabase
       .from('visitors')
       .insert({
         id: visitorId,
+        user_id: userId,
         ...locationData,
         referrer: document.referrer || null,
         utm_source: params.get('utm_source'),
         utm_medium: params.get('utm_medium'),
         utm_campaign: params.get('utm_campaign'),
+        utm_term: params.get('utm_term'),
+        utm_content: params.get('utm_content'),
         user_agent: navigator.userAgent,
       })
 
     if (error) {
       console.warn('[analytics] Failed to track visitor:', error.message)
-      return
+      return null
     }
 
-    sessionStorage.setItem('visitor_id', visitorId)
+    sessionStorage.setItem(VISITOR_SESSION_KEY, visitorId)
+    sessionStorage.setItem(SESSION_START_KEY, String(Date.now()))
+    sessionStorage.setItem(SESSION_TRACKED_KEY, 'false')
+    return visitorId
   } catch {
     console.warn('[analytics] trackVisitor threw unexpectedly')
+    return null
   }
 }
 
-export async function trackEvent(eventType, projectId = null) {
+export async function trackSessionDuration() {
+  if (!supabase) return
+  if (sessionStorage.getItem(SESSION_TRACKED_KEY) === 'true') return
+
+  const visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY)
+  const startedAt = Number(sessionStorage.getItem(SESSION_START_KEY) || Date.now())
+  if (!visitorId) return
+
+  const durationSeconds = Math.max(1, Math.round((Date.now() - startedAt) / 1000))
+
+  try {
+    await trackEvent('profile_session', null, { duration_seconds: durationSeconds })
+    sessionStorage.setItem(SESSION_TRACKED_KEY, 'true')
+  } catch {
+    console.warn('[analytics] trackSessionDuration failed silently')
+  }
+}
+
+export async function trackEvent(eventType, projectId = null, metadata = null) {
   if (!supabase) return
   try {
-    const visitorId = sessionStorage.getItem('visitor_id') || null
-    await supabase.from('events').insert({ visitor_id: visitorId, event_type: eventType, project_id: projectId })
+    const visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY) || null
+    await supabase.from('events').insert({
+      visitor_id: visitorId,
+      event_type: eventType,
+      project_id: projectId,
+      metadata,
+    })
   } catch {
     console.warn('[analytics] trackEvent failed silently')
   }

@@ -5,7 +5,7 @@ import Admin from './pages/Admin'
 import QRCodePage from './pages/QRCode'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
-import { trackVisitor } from '@/lib/analytics'
+import { trackSessionDuration, trackVisitor } from '@/lib/analytics'
 
 function App() {
   const location = useLocation()
@@ -14,8 +14,25 @@ function App() {
   const showChrome = !isAdmin && !isQrPage
 
   useEffect(() => {
-    // Track visitor on first load — fires once per session
     trackVisitor()
+
+    const handlePageExit = () => {
+      trackSessionDuration()
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        trackSessionDuration()
+      }
+    }
+
+    window.addEventListener('pagehide', handlePageExit)
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    return () => {
+      window.removeEventListener('pagehide', handlePageExit)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [])
 
   return (

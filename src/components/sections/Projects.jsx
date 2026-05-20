@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useProjects } from '../../hooks/useProjects'
 import ProjectCard from '../ProjectCard'
 import ProjectModal from '../ProjectModal'
+import { trackEvent } from '@/lib/analytics'
 
 export default function Projects() {
   const { categories, getByCategory } = useProjects()
@@ -24,7 +25,10 @@ export default function Projects() {
                 key={project.id}
                 project={project}
                 index={categoryIndex * 3 + projectIndex}
-                onClick={() => setSelectedProject(project)}
+                onClick={() => {
+                  trackEvent('project_open', project.id)
+                  setSelectedProject(project)
+                }}
               />
             ))}
           </div>
