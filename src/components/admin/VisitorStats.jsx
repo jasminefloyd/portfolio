@@ -3,6 +3,13 @@ import AdminPanel from './AdminPanel'
 import { useAdminData } from '../../hooks/useAdminData'
 
 export default function VisitorStats() {
+  function getDeviceType(userAgent = '') {
+    const ua = userAgent.toLowerCase()
+    if (/ipad|tablet|playbook|silk/.test(ua)) return 'Tablet'
+    if (/mobi|android|iphone|ipod/.test(ua)) return 'Mobile'
+    return 'Desktop'
+  }
+
   async function loadStats() {
     const visitors = await fetchAdminData('visitors')
     const countries = visitors.filter((v) => v.country)
@@ -40,6 +47,15 @@ export default function VisitorStats() {
       .slice(0, 5)
       .map(([source, count]) => ({ source, count }))
 
+    const deviceMap = {}
+    visitors?.forEach((v) => {
+      const device = getDeviceType(v.user_agent)
+      deviceMap[device] = (deviceMap[device] || 0) + 1
+    })
+    const deviceBreakdown = Object.entries(deviceMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(([device, count]) => ({ device, count }))
+
     const recentVisitors = visitors
       ?.slice(0, 10)
       .map((v) => ({
@@ -48,10 +64,11 @@ export default function VisitorStats() {
         location: [v.city, v.state].filter(Boolean).join(', ') || 'Unknown',
         source: v.referrer || 'Direct',
         utm: v.utm_source || '-',
+        device: getDeviceType(v.user_agent),
         created_at: v.created_at,
       })) || []
 
-    return { totalVisitors, topCountries, topReferrers, topSources, recentVisitors }
+    return { totalVisitors, topCountries, topReferrers, topSources, deviceBreakdown, recentVisitors }
   }
 
   const { data: stats, loading, error } = useAdminData(loadStats)
@@ -103,6 +120,22 @@ export default function VisitorStats() {
         </div>
       </div>
 
+      {stats.deviceBreakdown.length > 0 && (
+        <div className="mt-8">
+          <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
+            Device Breakdown
+          </h4>
+          <ul className="space-y-2">
+            {stats.deviceBreakdown.map(({ device, count }) => (
+              <li key={device} className="flex justify-between text-sm font-sans border-b border-border py-2">
+                <span className="text-text-primary">{device}</span>
+                <span className="text-text-secondary">{count}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {stats.topReferrers.length > 0 && (
         <div className="mt-8">
           <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
@@ -127,7 +160,7 @@ export default function VisitorStats() {
           <ul className="space-y-2">
             {stats.recentVisitors.map((visitor) => (
               <li key={visitor.id} className="text-sm font-sans border-b border-border py-2 text-text-primary">
-                {visitor.user_id} | {visitor.location} | {visitor.source} | UTM: {visitor.utm} | {new Date(visitor.created_at).toLocaleString()}
+                {visitor.user_id} | {visitor.location} | {visitor.source} | {visitor.device} | UTM: {visitor.utm} | {new Date(visitor.created_at).toLocaleString()}
               </li>
             ))}
           </ul>

@@ -1,6 +1,7 @@
 import { Linkedin, Github, FileText } from 'lucide-react'
 import profile from '../../data/profile.json'
 import CertificationsCarousel from '../CertificationsCarousel'
+import { trackEvent } from '@/lib/analytics'
 
 export default function Hero() {
   return (
@@ -27,6 +28,7 @@ export default function Hero() {
                   href={profile.socials.linkedin}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => trackEvent('external_profile_click', null, { profile: 'linkedin' })}
                   className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors"
                 >
                   <Linkedin size={20} />
@@ -38,6 +40,7 @@ export default function Hero() {
                   href={profile.socials.github}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => trackEvent('external_profile_click', null, { profile: 'github' })}
                   className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors"
                 >
                   <Github size={20} />
@@ -49,6 +52,7 @@ export default function Hero() {
                   href={profile.socials.substack}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => trackEvent('external_profile_click', null, { profile: 'substack' })}
                   className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors"
                 >
                   <FileText size={20} />
