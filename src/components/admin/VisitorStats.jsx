@@ -1,8 +1,24 @@
+import { useCallback } from 'react'
 import { fetchAdminData } from '../../lib/adminApi'
 import AdminPanel from './AdminPanel'
 import { useAdminData } from '../../hooks/useAdminData'
 
 export default function VisitorStats() {
+  function normalizeReferrer(referrer = '') {
+    if (!referrer) return 'Direct'
+
+    try {
+      const hostname = new URL(referrer).hostname.replace(/^www\./, '')
+      if (hostname.includes('linkedin.')) return 'LinkedIn'
+      if (hostname.includes('github.')) return 'GitHub'
+      if (hostname.includes('google.')) return 'Google'
+      if (hostname.includes('substack.')) return 'Substack'
+      return hostname
+    } catch {
+      return referrer
+    }
+  }
+
   function getDeviceType(userAgent = '') {
     const ua = userAgent.toLowerCase()
     if (/ipad|tablet|playbook|silk/.test(ua)) return 'Tablet'
@@ -10,7 +26,7 @@ export default function VisitorStats() {
     return 'Desktop'
   }
 
-  async function loadStats() {
+  const loadStats = useCallback(async () => {
     const visitors = await fetchAdminData('visitors')
     const countries = visitors.filter((v) => v.country)
 
@@ -28,7 +44,8 @@ export default function VisitorStats() {
     const referrerMap = {}
     visitors?.forEach((v) => {
       if (v.referrer) {
-        referrerMap[v.referrer] = (referrerMap[v.referrer] || 0) + 1
+        const referrer = normalizeReferrer(v.referrer)
+        referrerMap[referrer] = (referrerMap[referrer] || 0) + 1
       }
     })
     const topReferrers = Object.entries(referrerMap)
@@ -47,6 +64,29 @@ export default function VisitorStats() {
       .slice(0, 5)
       .map(([source, count]) => ({ source, count }))
 
+    const utmCampaignMap = {}
+    visitors?.forEach((v) => {
+      if (v.utm_campaign) {
+        utmCampaignMap[v.utm_campaign] = (utmCampaignMap[v.utm_campaign] || 0) + 1
+      }
+    })
+    const topCampaigns = Object.entries(utmCampaignMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([campaign, count]) => ({ campaign, count }))
+
+    const cityMap = {}
+    visitors?.forEach((v) => {
+      const label = [v.city, v.country].filter(Boolean).join(', ')
+      if (label) {
+        cityMap[label] = (cityMap[label] || 0) + 1
+      }
+    })
+    const topCities = Object.entries(cityMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([city, count]) => ({ city, count }))
+
     const deviceMap = {}
     visitors?.forEach((v) => {
       const device = getDeviceType(v.user_agent)
@@ -61,24 +101,36 @@ export default function VisitorStats() {
       .map((v) => ({
         id: v.id,
         user_id: v.user_id || 'unknown',
-        location: [v.city, v.state].filter(Boolean).join(', ') || 'Unknown',
-        source: v.referrer || 'Direct',
-        utm: v.utm_source || '-',
+        location: [v.city, v.state, v.country].filter(Boolean).join(', ') || 'Unknown',
+        referrer: v.referrer || 'Direct',
+        referrerLabel: normalizeReferrer(v.referrer),
+        utm_source: v.utm_source || '-',
+        utm_medium: v.utm_medium || '-',
+        utm_campaign: v.utm_campaign || '-',
         device: getDeviceType(v.user_agent),
         created_at: v.created_at,
       })) || []
 
-    return { totalVisitors, topCountries, topReferrers, topSources, deviceBreakdown, recentVisitors }
-  }
+    return {
+      totalVisitors,
+      topCountries,
+      topCities,
+      topReferrers,
+      topSources,
+      topCampaigns,
+      deviceBreakdown,
+      recentVisitors,
+    }
+  }, [])
 
-  const { data: stats, loading, error } = useAdminData(loadStats)
+  const { data: stats, loading, error, reload } = useAdminData(loadStats)
 
   if (loading || error || !stats) {
-    return <AdminPanel title="Visitor Analytics" loading={loading} error={error} empty={!stats && !loading && !error} />
+    return <AdminPanel title="Visitor Analytics" loading={loading} error={error} empty={!stats && !loading && !error} onRetry={reload} />
   }
 
   return (
-    <AdminPanel title="Visitor Analytics" loading={false} error={false} empty={false}>
+    <AdminPanel title="Visitor Analytics" loading={false} error={false} empty={false} onRetry={reload}>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-bg rounded-lg p-4">
           <p className="font-sans text-xs uppercase tracking-wider text-accent mb-2">
@@ -90,7 +142,7 @@ export default function VisitorStats() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
           <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
             Top Countries
@@ -107,12 +159,12 @@ export default function VisitorStats() {
 
         <div>
           <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
-            Top UTM Sources
+            Top Referrers
           </h4>
           <ul className="space-y-2">
-            {stats.topSources.map(({ source, count }) => (
-              <li key={source} className="flex justify-between text-sm font-sans border-b border-border py-2">
-                <span className="text-text-primary">{source}</span>
+            {stats.topReferrers.map(({ referrer, count }) => (
+              <li key={referrer} className="flex justify-between text-sm font-sans border-b border-border py-2">
+                <span className="text-text-primary truncate pr-2">{referrer}</span>
                 <span className="text-text-secondary">{count}</span>
               </li>
             ))}
@@ -120,8 +172,58 @@ export default function VisitorStats() {
         </div>
       </div>
 
-      {stats.deviceBreakdown.length > 0 && (
-        <div className="mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <div>
+          <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
+            Top UTM Sources
+          </h4>
+          <ul className="space-y-2">
+            {stats.topSources.length > 0 ? stats.topSources.map(({ source, count }) => (
+              <li key={source} className="flex justify-between text-sm font-sans border-b border-border py-2">
+                <span className="text-text-primary">{source}</span>
+                <span className="text-text-secondary">{count}</span>
+              </li>
+            )) : (
+              <li className="text-sm font-sans text-text-secondary">No UTM source data yet.</li>
+            )}
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
+            Top UTM Campaigns
+          </h4>
+          <ul className="space-y-2">
+            {stats.topCampaigns.length > 0 ? stats.topCampaigns.map(({ campaign, count }) => (
+              <li key={campaign} className="flex justify-between text-sm font-sans border-b border-border py-2">
+                <span className="text-text-primary truncate pr-2">{campaign}</span>
+                <span className="text-text-secondary">{count}</span>
+              </li>
+            )) : (
+              <li className="text-sm font-sans text-text-secondary">No UTM campaign data yet.</li>
+            )}
+          </ul>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <div>
+          <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
+            Top Cities
+          </h4>
+          <ul className="space-y-2">
+            {stats.topCities.length > 0 ? stats.topCities.map(({ city, count }) => (
+              <li key={city} className="flex justify-between text-sm font-sans border-b border-border py-2">
+                <span className="text-text-primary truncate pr-2">{city}</span>
+                <span className="text-text-secondary">{count}</span>
+              </li>
+            )) : (
+              <li className="text-sm font-sans text-text-secondary">No city data yet.</li>
+            )}
+          </ul>
+        </div>
+
+        <div>
           <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
             Device Breakdown
           </h4>
@@ -134,36 +236,48 @@ export default function VisitorStats() {
             ))}
           </ul>
         </div>
-      )}
-
-      {stats.topReferrers.length > 0 && (
-        <div className="mt-8">
-          <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
-            Top Referrers
-          </h4>
-          <ul className="space-y-2">
-            {stats.topReferrers.map(({ referrer, count }) => (
-              <li key={referrer} className="flex justify-between text-sm font-sans border-b border-border py-2">
-                <span className="text-text-primary truncate">{referrer}</span>
-                <span className="text-text-secondary ml-2">{count}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      </div>
 
       {stats.recentVisitors.length > 0 && (
         <div className="mt-8">
           <h4 className="font-sans text-sm font-semibold text-text-primary mb-4">
             Recent Visitors
           </h4>
-          <ul className="space-y-2">
-            {stats.recentVisitors.map((visitor) => (
-              <li key={visitor.id} className="text-sm font-sans border-b border-border py-2 text-text-primary">
-                {visitor.user_id} | {visitor.location} | {visitor.source} | {visitor.device} | UTM: {visitor.utm} | {new Date(visitor.created_at).toLocaleString()}
-              </li>
-            ))}
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[860px] text-sm font-sans">
+              <thead>
+                <tr className="text-left text-text-secondary border-b border-border">
+                  <th className="py-2 pr-4 font-medium">When</th>
+                  <th className="py-2 pr-4 font-medium">Who</th>
+                  <th className="py-2 pr-4 font-medium">Where</th>
+                  <th className="py-2 pr-4 font-medium">Referrer</th>
+                  <th className="py-2 pr-4 font-medium">UTM Source</th>
+                  <th className="py-2 pr-4 font-medium">UTM Medium</th>
+                  <th className="py-2 pr-4 font-medium">UTM Campaign</th>
+                  <th className="py-2 font-medium">Device</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stats.recentVisitors.map((visitor) => (
+                  <tr key={visitor.id} className="border-b border-border text-text-primary align-top">
+                    <td className="py-3 pr-4 whitespace-nowrap">{new Date(visitor.created_at).toLocaleString()}</td>
+                    <td className="py-3 pr-4 break-all">{visitor.user_id}</td>
+                    <td className="py-3 pr-4">{visitor.location}</td>
+                    <td className="py-3 pr-4">
+                      <div>{visitor.referrerLabel}</div>
+                      {visitor.referrer !== 'Direct' && (
+                        <div className="text-xs text-text-secondary break-all mt-1">{visitor.referrer}</div>
+                      )}
+                    </td>
+                    <td className="py-3 pr-4">{visitor.utm_source}</td>
+                    <td className="py-3 pr-4">{visitor.utm_medium}</td>
+                    <td className="py-3 pr-4">{visitor.utm_campaign}</td>
+                    <td className="py-3">{visitor.device}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </AdminPanel>

@@ -2,11 +2,25 @@ import { useState } from 'react'
 import { useProjects } from '../../hooks/useProjects'
 import ProjectCard from '../ProjectCard'
 import ProjectModal from '../ProjectModal'
-import { trackEvent } from '@/lib/analytics'
 
 export default function Projects() {
-  const { categories, getByCategory } = useProjects()
+  const { categories, getByCategory, loading } = useProjects()
   const [selectedProject, setSelectedProject] = useState(null)
+
+  if (loading) {
+    return (
+      <section className="projects-surface px-5 sm:px-6 py-16 sm:py-24 max-w-6xl mx-auto w-full rounded-[1.5rem] sm:rounded-[2rem]">
+        <h2 className="font-display text-3xl md:text-4xl text-text-primary mb-12 sm:mb-16">
+          Projects
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[0, 1, 2].map((index) => (
+            <div key={index} className="h-64 rounded-xl border border-border bg-surface animate-pulse" />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="projects-surface px-5 sm:px-6 py-16 sm:py-24 max-w-6xl mx-auto w-full rounded-[1.5rem] sm:rounded-[2rem]">
@@ -25,10 +39,7 @@ export default function Projects() {
                 key={project.id}
                 project={project}
                 index={categoryIndex * 3 + projectIndex}
-                onClick={() => {
-                  trackEvent('project_open', project.id)
-                  setSelectedProject(project)
-                }}
+                onClick={() => setSelectedProject(project)}
               />
             ))}
           </div>

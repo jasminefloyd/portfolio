@@ -36,6 +36,22 @@ create table if not exists messages (
   read boolean default false
 );
 
+create table if not exists portfolio_projects (
+  id text primary key,
+  title text not null,
+  category text not null,
+  description text not null,
+  role text not null,
+  tech_stack text[] not null default '{}',
+  ai_agent_arch text,
+  outcomes text[] not null default '{}',
+  github_url text,
+  demo_url text,
+  sort_order integer not null default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 -- ============================================================
 -- RLS — Enable row level security on all tables
 -- ============================================================
@@ -43,6 +59,7 @@ create table if not exists messages (
 alter table visitors enable row level security;
 alter table events enable row level security;
 alter table messages enable row level security;
+alter table portfolio_projects enable row level security;
 
 -- ============================================================
 -- POLICIES
@@ -73,3 +90,19 @@ create policy "authenticated can select messages"
 
 create policy "authenticated can update messages"
   on messages for update to authenticated using (true);
+
+-- portfolio_projects
+create policy "authenticated can select portfolio_projects"
+  on portfolio_projects for select to authenticated using (true);
+
+create policy "anon can select portfolio_projects"
+  on portfolio_projects for select to anon using (true);
+
+create policy "authenticated can insert portfolio_projects"
+  on portfolio_projects for insert to authenticated with check (true);
+
+create policy "authenticated can update portfolio_projects"
+  on portfolio_projects for update to authenticated using (true);
+
+create policy "authenticated can delete portfolio_projects"
+  on portfolio_projects for delete to authenticated using (true);

@@ -1,20 +1,33 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import projectsData from '../data/projects.json'
-
-const STORAGE_KEY = 'admin_projects_data'
+import { fetchPublishedProjects } from '../lib/projectsApi'
 
 export function useProjects() {
-  const data = useMemo(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (!raw) return projectsData
-      const parsed = JSON.parse(raw)
-      if (!parsed?.projects || !Array.isArray(parsed.projects) || !Array.isArray(parsed.categories)) {
-        return projectsData
+  const [data, setData] = useState(projectsData)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+
+    async function load() {
+      try {
+        const result = await fetchPublishedProjects()
+        if (!active) return
+        setData(result)
+      } catch {
+        if (!active) return
+        setData(projectsData)
+      } finally {
+        if (active) {
+          setLoading(false)
+        }
       }
-      return parsed
-    } catch {
-      return projectsData
+    }
+
+    load()
+
+    return () => {
+      active = false
     }
   }, [])
 
@@ -23,5 +36,5 @@ export function useProjects() {
   const getByCategory = (category) => projects.filter((p) => p.category === category)
   const getById = (id) => projects.find((p) => p.id === id) || null
 
-  return { projects, categories, getByCategory, getById }
+  return { projects, categories, getByCategory, getById, loading }
 }

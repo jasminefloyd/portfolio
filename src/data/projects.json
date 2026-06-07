@@ -1,18 +1,18 @@
 {
-  "categories": ["Production Builds", "Internal Tools", "Capstone + Learning"],
+  "categories": ["Production Builds + Experiments", "Internal Tools", "Capstone + Learning"],
   "projects": [
     {
       "id": "internal-slack-summarizer",
       "title": "Looking Glass",
       "category": "Internal Tools",
-      "description": "An internal tool that summarizes long Slack threads into concise action items using Claude. Reduced meeting follow-up time by 40% across the product team.",
-      "role": "Product Lead & Prompt Engineer",
-      "techStack": ["React", "Node.js", "Claude API", "Slack API"],
-      "aiAgentArch": "Single summarization agent with a structured output prompt. Input: raw thread JSON. Output: JSON with summary, action items, and owners. Deployed as a Slack slash command.",
+      "description": "A competitive intelligence platform that automates market research and product validation across competitor sites, review channels, and community signals.",
+      "role": "Product Lead, Systems Designer, and Prompt Engineer",
+      "techStack": ["React", "Vite", "Web Search", "LLM Workflows", "Lovable Cloud"],
+      "aiAgentArch": "Two-agent workflow: an aggregation layer runs structured research modules across multiple sources, then a synthesis agent scores market need, marketability, and strategic fit into a decision-ready report.",
       "outcomes": [
-        "Reduced post-meeting follow-up time by ~40%",
-        "Adopted by 3 internal teams within 2 weeks of launch",
-        "Average summary generated in under 4 seconds"
+        "Turned scattered market research into a repeatable product-validation workflow",
+        "Structured findings into scored reports instead of ad hoc notes and screenshots",
+        "Created a reusable research system for feature, market, and competitor analysis"
       ],
       "links": {
         "github": null,
@@ -23,14 +23,14 @@
       "id": "internal-doc-qa",
       "title": "Onsite Trip Planner",
       "category": "Internal Tools",
-      "description": "A RAG-powered chatbot that answers questions about internal product documentation. Eliminated repetitive questions to the product team by 60%.",
+      "description": "An internal planning tool designed to help teams organize onsite logistics, coordinate decisions, and keep trip details centralized in one working surface.",
       "role": "Product Manager & Systems Designer",
-      "techStack": ["Python", "LangChain", "Pinecone", "Streamlit", "OpenAI"],
-      "aiAgentArch": "Retrieval-Augmented Generation pipeline: documents chunked and embedded into Pinecone, retrieved on query, passed to GPT-4 for synthesis with source citations.",
+      "techStack": ["React", "Vite", "JavaScript", "Workflow Design"],
+      "aiAgentArch": null,
       "outcomes": [
-        "Reduced repetitive documentation questions by ~60%",
-        "Indexed 200+ internal documents at launch",
-        "Response accuracy rated 4.2/5 by internal users"
+        "Reduced planning friction by centralizing trip context and logistics",
+        "Made coordination easier across stakeholders working from the same source of truth",
+        "Created a clearer handoff between planning, approvals, and execution"
       ],
       "links": {
         "github": null,
@@ -39,16 +39,16 @@
     },
     {
       "id": "internal-sprint-reporter",
-      "title": "[Placeholder] Project",
+      "title": "Sprint Signal",
       "category": "Internal Tools",
-      "description": "A tool that auto-generates weekly sprint reports from Jira data using AI, formatted for executive stakeholders.",
-      "role": "Product Manager & Developer",
+      "description": "A reporting workflow that transforms Jira activity into concise weekly sprint updates tailored for leadership and cross-functional stakeholders.",
+      "role": "Product Manager & Workflow Builder",
       "techStack": ["React", "Supabase", "Claude API", "Jira API"],
-      "aiAgentArch": null,
+      "aiAgentArch": "A structured reporting workflow pulls sprint inputs, normalizes delivery updates, and uses LLM prompting to draft executive-ready summaries with blockers, wins, and next steps.",
       "outcomes": [
-        "Saved 2 hours per sprint cycle in report preparation",
-        "Adopted by 2 engineering teams",
-        "Stakeholder satisfaction with report clarity improved"
+        "Reduced manual reporting overhead at the end of each sprint",
+        "Improved consistency in how delivery updates were communicated upward",
+        "Made stakeholder readouts faster to produce and easier to scan"
       ],
       "links": {
         "github": null,
@@ -58,51 +58,51 @@
     {
       "id": "prod-ai-writing-assistant",
       "title": "AI Onboarding Engine",
-      "category": "Production Builds",
-      "description": "A production SaaS tool that helps product managers write PRDs, user stories, and release notes using AI. Launched to 200+ beta users.",
+      "category": "Production Builds + Experiments",
+      "description": "A customer-facing AI workflow that helps users get started faster by generating tailored onboarding guidance, product setup steps, and contextual next actions.",
       "role": "Founder & Product Manager",
       "techStack": ["Next.js", "Supabase", "Claude API", "Stripe", "Vercel"],
-      "aiAgentArch": "Multi-mode agent with specialized prompts per document type (PRD, user story, release note). Context-aware — feeds in the user's previous documents to maintain voice consistency.",
+      "aiAgentArch": "A context-aware onboarding assistant adapts guidance based on user inputs, setup stage, and product intent, then returns step-by-step recommendations instead of static checklists.",
       "outcomes": [
-        "200+ beta users in first 30 days",
-        "4.7/5 average user rating",
-        "Reduced PRD drafting time from ~3 hours to ~45 minutes"
+        "Shortened the path from sign-up to first successful workflow",
+        "Delivered more personalized onboarding than a static product tour",
+        "Showed how AI can support activation without overwhelming new users"
       ],
       "links": {
         "github": null,
-        "demo": "https://example.com"
+        "demo": null
       }
     },
     {
       "id": "prod-feedback-analyzer",
       "title": "Popmenu AI Assistant",
-      "category": "Production Builds",
+      "category": "Production Builds + Experiments",
       "description": "A production tool that ingests customer support tickets and reviews, clusters them by theme, and surfaces prioritized product insights.",
       "role": "Product Lead & ML Integrations",
       "techStack": ["React", "FastAPI", "OpenAI Embeddings", "Supabase", "Vercel"],
       "aiAgentArch": "Two-agent pipeline: (1) Classifier agent tags each ticket with category and sentiment. (2) Synthesis agent groups clusters and generates a prioritized insight report with recommended actions.",
       "outcomes": [
-        "Processed 10,000+ tickets at launch",
-        "Reduced time-to-insight from 5 days to 4 hours",
-        "Identified 3 critical product bugs missed by manual review"
+        "Condensed high-volume customer feedback into product-ready insight themes",
+        "Reduced time-to-insight for support and review analysis",
+        "Helped teams spot recurring issues and prioritize action faster"
       ],
       "links": {
-        "github": "https://github.com/yourhandle/feedback-analyzer",
+        "github": null,
         "demo": null
       }
     },
     {
       "id": "prod-onboarding-copilot",
-      "title": "[Placeholder] Project",
-      "category": "Production Builds",
-      "description": "An in-app AI assistant that guides new users through product setup with personalized step-by-step prompts based on their use case.",
-      "role": "Product Manager",
-      "techStack": ["React", "Supabase", "Claude API"],
-      "aiAgentArch": null,
+      "title": "AI Seat Filler",
+      "category": "Production Builds + Experiments",
+      "description": "An AI workflow for salons that detects open appointment slots, identifies the best-fit clients to fill them, and generates personalized SMS campaigns for human approval.",
+      "role": "Product Manager & AI Workflow Designer",
+      "techStack": ["AI Ranking Logic", "SMS Campaign Workflows", "Booking Data", "Approval Flows"],
+      "aiAgentArch": "A gap-detection and campaign workflow monitors cancellations and calendar gaps, ranks eligible clients by booking confidence, generates personalized outreach, and sends in intelligent batches that stop automatically once a slot is filled.",
       "outcomes": [
-        "Improved 7-day activation rate by 28%",
-        "Reduced support tickets from new users by 35%",
-        "Average time-to-first-value dropped from 12 minutes to 5 minutes"
+        "Turned empty appointment slots into a proactive revenue-recovery workflow",
+        "Kept owners and stylists in control with explicit approval before any campaign sends",
+        "Balanced fill-rate goals with guardrails like throttling, deduplication, and batch auto-cancel"
       ],
       "links": {
         "github": null,
@@ -113,17 +113,17 @@
       "id": "capstone-agent-framework",
       "title": "PricePilot",
       "category": "Capstone + Learning",
-      "description": "A capstone project exploring multi-agent orchestration patterns. Built a framework for chaining specialized agents with handoff protocols and failure recovery.",
+      "description": "A capstone build exploring multi-agent orchestration patterns, structured handoffs, and failure recovery across a chained AI workflow.",
       "role": "Solo Builder",
       "techStack": ["Python", "LangGraph", "Claude API", "FastAPI"],
       "aiAgentArch": "LangGraph-based orchestrator managing 4 specialized agents: Research, Drafting, Review, and Formatting. Each agent has defined input/output contracts. Supervisor agent handles routing and retry logic on failure.",
       "outcomes": [
-        "Completed as part of AI PM certification program",
-        "Framework open-sourced with 40+ GitHub stars",
-        "Published a writeup on Substack covering the architecture decisions"
+        "Deepened hands-on understanding of agent routing and orchestration",
+        "Created a reusable pattern for multi-step AI workflows",
+        "Documented architecture choices and tradeoffs for future builds"
       ],
       "links": {
-        "github": "https://github.com/yourhandle/agent-framework",
+        "github": null,
         "demo": null
       }
     },
@@ -131,17 +131,17 @@
       "id": "capstone-rag-evaluation",
       "title": "Resy Passport",
       "category": "Capstone + Learning",
-      "description": "A learning project building a systematic evaluation toolkit for RAG pipelines — measuring retrieval quality, answer faithfulness, and hallucination rate.",
-      "role": "Solo Researcher & Builder",
-      "techStack": ["Python", "OpenAI", "Pinecone", "RAGAS", "Jupyter"],
+      "description": "A mobile-first restaurant journal that lets users log dining experiences, track visits on a map, and share memorable meals through public passport pages.",
+      "role": "Product Designer & Builder",
+      "techStack": ["React", "Vite", "Supabase", "Tailwind CSS", "Google Places API"],
       "aiAgentArch": null,
       "outcomes": [
-        "Evaluated 3 different chunking strategies across a 500-document corpus",
-        "Documented findings in a public Substack post",
-        "Toolkit used in subsequent production RAG build"
+        "Designed a polished consumer-facing experience around personal food memories",
+        "Combined structured visit logging with lightweight sharing and mapping",
+        "Built a strong foundation for later AI features without depending on them for MVP"
       ],
       "links": {
-        "github": "https://github.com/yourhandle/rag-eval",
+        "github": null,
         "demo": null
       }
     },

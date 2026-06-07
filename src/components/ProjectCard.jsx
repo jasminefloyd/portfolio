@@ -11,6 +11,11 @@ const categoryStyles = {
     pill: 'bg-emerald-100 text-emerald-700',
     border: 'group-hover:border-emerald-300/70 group-focus-visible:border-emerald-300/70',
   },
+  'Production Builds + Experiments': {
+    bar: 'from-teal-500/40 to-emerald-400/55',
+    pill: 'bg-emerald-100 text-emerald-700',
+    border: 'group-hover:border-emerald-300/70 group-focus-visible:border-emerald-300/70',
+  },
   'Capstone + Learning': {
     bar: 'from-indigo-500/35 to-amber-300/55',
     pill: 'bg-indigo-100 text-indigo-700',

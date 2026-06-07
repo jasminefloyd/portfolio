@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import AdminLogin from '../components/admin/AdminLogin'
+import AnalyticsOverview from '../components/admin/AnalyticsOverview'
 import VisitorStats from '../components/admin/VisitorStats'
 import EventStats from '../components/admin/EventStats'
 import MessagesInbox from '../components/admin/MessagesInbox'
@@ -60,6 +61,7 @@ export default function Admin() {
 
         {tab === 'analytics' ? (
           <>
+            <AnalyticsOverview />
             <VisitorStats />
             <EventStats />
             <MessagesInbox />

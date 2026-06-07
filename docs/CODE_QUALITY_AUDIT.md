@@ -15,7 +15,7 @@
 - ✅ Contact form → Supabase messages table inbox
 - ✅ Visitor tracking: location, referrer, UTM parameters
 - ✅ Hidden admin portal at `/admin` with visitor analytics, event stats, project opens leaderboard, messages inbox
-- ✅ Projects hardcoded in `src/data/projects.json`
+- ✅ Portfolio projects now have a dedicated Supabase table with fallback seed data in `src/data/projects.json`
 
 ### Tech Stack Implementation ✅
 - ✅ Frontend: React 18 + Vite
@@ -37,7 +37,7 @@
 - ✅ Complete component hierarchy (sections, admin, pages)
 - ✅ Centralized styles (`src/lib/styles.js`)
 - ✅ Analytics module (`src/lib/analytics.js`)
-- ✅ Project data + hook (`src/data/projects.json`, `src/hooks/useProjects.js`)
+- ✅ Project data + fetch path (`src/lib/projectsApi.js`, `src/hooks/useProjects.js`, fallback `src/data/projects.json`)
 - ✅ Supabase client (`src/lib/supabaseClient.js`)
 - ✅ All 14 components + 2 pages fully implemented
 

@@ -33,7 +33,7 @@ export async function fetchAdminData(query, filters = {}) {
   const { data, error } = await supabase.functions.invoke('admin-data', {
     body: { query, filters },
     headers: {
-      Authorization: `Bearer ${getAdminToken()}`,
+      'x-admin-secret': getAdminToken(),
     },
   })
 
@@ -50,13 +50,30 @@ export async function updateMessageRead(messageId, read) {
   const { data, error } = await supabase.functions.invoke('admin-data', {
     body: { query: 'messages', action: 'update_read', id: messageId, read },
     headers: {
-      Authorization: `Bearer ${getAdminToken()}`,
+      'x-admin-secret': getAdminToken(),
     },
   })
 
   if (error) {
     await logFunctionErrorDetails('[adminApi] admin-data update error:', error)
     throw new Error(error.message || 'Failed to update message state')
+  }
+  return data
+}
+
+export async function saveProjects(categories, projects) {
+  if (!supabase) throw new Error('Supabase client not configured')
+
+  const { data, error } = await supabase.functions.invoke('admin-data', {
+    body: { query: 'portfolio_projects', action: 'replace_all', categories, projects },
+    headers: {
+      'x-admin-secret': getAdminToken(),
+    },
+  })
+
+  if (error) {
+    await logFunctionErrorDetails('[adminApi] admin-data projects save error:', error)
+    throw new Error(error.message || 'Failed to save projects')
   }
   return data
 }

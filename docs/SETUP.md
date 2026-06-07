@@ -24,7 +24,8 @@ Fill in your `.env`:
 ### 3. Set up Supabase database
 1. Go to your Supabase project → SQL Editor
 2. Paste and run the contents of `supabase/schema.sql`
-3. Confirm all three tables appear in the Table Editor
+3. Confirm the analytics tables appear in the Table Editor
+4. Apply the later migrations so `portfolio_projects` exists for the public site and admin editor
 
 ### 4. Run the dev server
 ```bash
@@ -38,7 +39,7 @@ Visit `http://localhost:5173`
 
 ### Update your content
 - `src/data/profile.json` — your name, title, bio, and social links
-- `src/data/projects.json` — replace placeholder projects with your real ones
+- `src/data/projects.json` — fallback/seed source for `portfolio_projects`
 - `public/resume.pdf` — add your actual resume PDF
 - `public/favicon.svg` — update initials from `YN` to yours
 - `index.html` — update `<title>` and `<meta name="description">`

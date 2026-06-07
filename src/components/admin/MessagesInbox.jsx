@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { fetchAdminData, updateMessageRead } from '../../lib/adminApi'
 import AdminPanel from './AdminPanel'
 import { useAdminData } from '../../hooks/useAdminData'
@@ -7,17 +7,18 @@ export default function MessagesInbox() {
   const [messages, setMessages] = useState(null)
   const [markingRead, setMarkingRead] = useState({})
 
-  async function loadMessages() {
+  const loadMessages = useCallback(async () => {
     const data = await fetchAdminData('messages', { orderBy: 'created_at', ascending: false })
     return data || []
-  }
+  }, [])
 
-  const { data: initialMessages, loading, error } = useAdminData(loadMessages)
+  const { data: initialMessages, loading, error, reload } = useAdminData(loadMessages)
 
-  // Sync initial data to local state for mark-read mutations
-  if (!messages && initialMessages) {
-    setMessages(initialMessages)
-  }
+  useEffect(() => {
+    if (initialMessages) {
+      setMessages(initialMessages)
+    }
+  }, [initialMessages])
 
   async function toggleRead(messageId, currentRead) {
     setMarkingRead((prev) => ({ ...prev, [messageId]: true }))
@@ -35,15 +36,15 @@ export default function MessagesInbox() {
   }
 
   if (loading || error || !messages) {
-    return <AdminPanel title="Messages" loading={loading} error={error} empty={messages && messages.length === 0} />
+    return <AdminPanel title="Messages" loading={loading} error={error} empty={Array.isArray(messages) && messages.length === 0} onRetry={reload} />
   }
 
   if (messages.length === 0) {
-    return <AdminPanel title="Messages" loading={false} error={false} empty={true} />
+    return <AdminPanel title="Messages" loading={false} error={false} empty={true} onRetry={reload} />
   }
 
   return (
-    <AdminPanel title="Messages" loading={false} error={false} empty={false}>
+    <AdminPanel title="Messages" loading={false} error={false} empty={false} onRetry={reload}>
       <div className="space-y-3">
         {messages.map((msg) => (
           <div

@@ -31,7 +31,7 @@ A professional one-page portfolio site for an AI Product Manager. Serves as a di
 4. Contact form → Supabase `messages` table inbox
 5. Visitor tracking: location, referrer, UTM parameters on every page load
 6. Hidden admin portal at `/admin` with: visitor analytics, event stats, project opens leaderboard, messages inbox
-7. Projects hardcoded in `src/data/projects.json` _(CMS is a future Bonus feature)_
+7. Projects are served from Supabase `portfolio_projects` in production, with `src/data/projects.json` retained as fallback seed data
 
 ---
 
@@ -87,7 +87,7 @@ A professional one-page portfolio site for an AI Product Manager. Serves as a di
 | created_at | timestamptz | default now() |
 | visitor_id | uuid | FK → visitors.id (nullable) |
 | event_type | text | 'resume_download' \| 'project_open' |
-| project_id | text | matches id in projects.json (nullable) |
+| project_id | text | matches `portfolio_projects.id` (nullable) |
 | metadata | jsonb | nullable, reserved for future use |
 
 ### `messages`
@@ -100,6 +100,23 @@ A professional one-page portfolio site for an AI Product Manager. Serves as a di
 | message | text | from contact form |
 | read | boolean | default false |
 
+### `portfolio_projects`
+| Column | Type | Notes |
+|---|---|---|
+| id | text | PK, matches frontend project id |
+| title | text | card + modal title |
+| category | text | section grouping + modal pill |
+| description | text | card summary + modal intro |
+| role | text | modal role field |
+| tech_stack | text[] | modal tech stack list |
+| ai_agent_arch | text | optional modal architecture section |
+| outcomes | text[] | card key outcome source + modal outcomes |
+| github_url | text | optional modal GitHub button |
+| demo_url | text | optional modal Live Demo button |
+| sort_order | integer | preserves display order |
+| created_at | timestamptz | default now() |
+| updated_at | timestamptz | default now() |
+
 ### RLS Policies (all tables)
 - **anon:** INSERT only — no SELECT
 - **authenticated:** full SELECT (+ UPDATE on messages for mark-as-read)
@@ -110,13 +127,14 @@ A professional one-page portfolio site for an AI Product Manager. Serves as a di
 ## Supabase Edge Functions
 
 ### `admin-data`
-**Purpose:** Server-side proxy for admin dashboard data reads. Required because the anon key has no SELECT permission on any table.
+**Purpose:** Server-side proxy for admin dashboard data reads and project writes. Required because the anon key has no SELECT permission on admin-only tables and the admin dashboard uses a protected write path for `portfolio_projects`.
 
 **Request:**
 ```json
 POST /functions/v1/admin-data
-Authorization: Bearer ADMIN_SECRET
-{ "query": "visitors" | "events" | "messages", "filters": { ... } }
+Authorization: Bearer <supabase-anon-jwt>
+x-admin-secret: ADMIN_SECRET
+{ "query": "visitors" | "events" | "messages" | "portfolio_projects", "filters": { ... } }
 ```
 
 **Response:** JSON array of rows from the requested table.
@@ -138,7 +156,7 @@ Authorization: Bearer ADMIN_SECRET
 
 ---
 
-## Project Data Structure (`src/data/projects.json`)
+## Project Data Structure (`src/data/projects.json` fallback + `portfolio_projects` source schema)
 
 ```json
 {
@@ -164,6 +182,21 @@ Authorization: Bearer ADMIN_SECRET
 
 `aiAgentArch` is `null` for non-AI projects. When not null, it renders as a highlighted info panel in the modal.
 
+Equivalent `portfolio_projects` DB mapping for a single project row:
+
+```text
+id            -> id
+title         -> title
+category      -> category
+description   -> description
+role          -> role
+techStack     -> tech_stack
+aiAgentArch   -> ai_agent_arch
+outcomes      -> outcomes
+links.github  -> github_url
+links.demo    -> demo_url
+```
+
 ---
 
 ## Key File Paths
@@ -172,13 +205,14 @@ Authorization: Bearer ADMIN_SECRET
 src/
 ├── App.jsx                          # Router, trackVisitor() on load
 ├── data/
-│   ├── projects.json                # Single source of truth for all 9 projects
+│   ├── projects.json                # Fallback seed data for portfolio projects
 │   └── profile.json                 # Name, bio, social links
 ├── hooks/
-│   └── useProjects.js               # getByCategory(), getById()
+│   └── useProjects.js               # Fetches Supabase-backed project data with fallback
 ├── lib/
 │   ├── analytics.js                 # trackVisitor, trackEvent, submitMessage
 │   └── supabaseClient.js            # Supabase client (anon key)
+│   └── projectsApi.js               # Public project fetch path (`portfolio_projects`)
 ├── components/
 │   ├── ProjectCard.jsx              # Card: title, category badge, description
 │   ├── ProjectModal.jsx             # Full detail modal
@@ -219,7 +253,7 @@ VITE_ADMIN_PASSWORD=         # Admin portal password (also set as ADMIN_SECRET i
 
 Supabase Edge Function secrets (set via CLI, never in .env):
 ```
-ADMIN_SECRET=                # Same value as VITE_ADMIN_PASSWORD
+ADMIN_SECRET=                # Same value as VITE_ADMIN_PASSWORD, sent as x-admin-secret
 SUPABASE_SERVICE_ROLE_KEY=   # Auto-available in Edge Functions
 ```
 
