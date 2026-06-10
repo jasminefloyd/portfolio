@@ -6,6 +6,21 @@ const SESSION_START_KEY = 'profile_session_start'
 const SESSION_TRACKED_KEY = 'profile_session_tracked'
 let visitorTrackingPromise = null
 
+function resetVisitorSession() {
+  sessionStorage.removeItem(VISITOR_SESSION_KEY)
+  sessionStorage.removeItem(SESSION_START_KEY)
+  sessionStorage.removeItem(SESSION_TRACKED_KEY)
+}
+
+async function insertEvent({ visitorId, eventType, projectId, metadata }) {
+  return supabase.from('events').insert({
+    visitor_id: visitorId,
+    event_type: eventType,
+    project_id: projectId,
+    metadata,
+  })
+}
+
 function getOrCreateUserId() {
   const existing = localStorage.getItem(USER_ID_KEY)
   if (existing) return existing
@@ -102,19 +117,21 @@ export async function trackSessionDuration() {
 export async function trackEvent(eventType, projectId = null, metadata = null) {
   if (!supabase) return
   try {
-    const visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY) || await trackVisitor()
-    const { error } = await supabase.from('events').insert({
-      visitor_id: visitorId,
-      event_type: eventType,
-      project_id: projectId,
-      metadata,
-    })
+    let visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY) || await trackVisitor()
+    let { error } = await insertEvent({ visitorId, eventType, projectId, metadata })
+
+    if (error && visitorId) {
+      console.warn(`[analytics] Retrying ${eventType} after resetting stale visitor session:`, error.message)
+      resetVisitorSession()
+      visitorId = await trackVisitor()
+      ;({ error } = await insertEvent({ visitorId, eventType, projectId, metadata }))
+    }
 
     if (error) {
       console.warn(`[analytics] Failed to track ${eventType}:`, error.message)
     }
-  } catch {
-    console.warn('[analytics] trackEvent failed silently')
+  } catch (error) {
+    console.warn('[analytics] trackEvent failed silently', error)
   }
 }
 

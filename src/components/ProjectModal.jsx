@@ -1,12 +1,6 @@
-import { useEffect } from 'react'
 import { X, CheckCircle2, CalendarClock, Users, BriefcaseBusiness } from 'lucide-react'
-import { trackEvent } from '@/lib/analytics'
 
 export default function ProjectModal({ project, onClose }) {
-  useEffect(() => {
-    trackEvent('project_open', project.id)
-  }, [project.id])
-
   const snapshotStage = project.category === 'Capstone + Learning' ? 'Learning Build' : 'Production Pilot'
   const snapshotTimeline = project.category === 'Capstone + Learning' ? '4-8 weeks' : '6-12 weeks'
   const snapshotTeam = project.category === 'Capstone + Learning' ? 'Solo' : '2-6 collaborators'
