@@ -1,27 +1,41 @@
 import { supabase } from './supabaseClient'
 
-export async function fetchAdminData(query, filters = {}) {
+const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD
+
+async function callAdminFunction(payload) {
   if (!supabase) throw new Error('Supabase client not configured')
+  if (!adminPassword) throw new Error('Admin password not configured')
 
+  const { data, error } = await supabase.functions.invoke('admin-data', {
+    body: payload,
+    headers: {
+      'x-admin-secret': adminPassword,
+    },
+  })
+
+  if (error) {
+    console.error('[adminApi] Function error:', error)
+    throw new Error(error.message || 'Admin request failed')
+  }
+
+  if (data?.error) {
+    throw new Error(data.error)
+  }
+
+  return data
+}
+
+export async function fetchAdminData(query, filters = {}) {
   try {
-    console.log(`[adminApi] Fetching ${query}...`)
-    let request = supabase.from(query).select('*')
+    console.log(`[adminApi] Fetching ${query} via admin-data...`)
 
-    if (filters?.orderBy) {
-      request = request.order(filters.orderBy, { ascending: Boolean(filters.ascending) })
-    } else if (query === 'portfolio_projects') {
-      request = request.order('sort_order', { ascending: true })
-    }
-
-    const { data, error } = await request
-
-    if (error) {
-      console.error(`[adminApi] Query error for ${query}:`, error)
-      throw new Error(error.message || `Failed to fetch ${query}`)
-    }
+    const data = await callAdminFunction({
+      query,
+      filters,
+    })
 
     console.log(`[adminApi] Successfully fetched ${query}:`, data?.length || 0, 'records')
-    return data || []
+    return Array.isArray(data) ? data : []
   } catch (err) {
     console.error(`[adminApi] Exception fetching ${query}:`, err)
     throw err
@@ -29,66 +43,28 @@ export async function fetchAdminData(query, filters = {}) {
 }
 
 export async function updateMessageRead(messageId, read) {
-  if (!supabase) throw new Error('Supabase client not configured')
-
   try {
-    const { data, error } = await supabase
-      .from('messages')
-      .update({ read })
-      .eq('id', messageId)
-
-    if (error) {
-      console.error('[adminApi] Update error:', error.message)
-      throw new Error(error.message || 'Failed to update message state')
-    }
-
-    return data
+    return await callAdminFunction({
+      query: 'messages',
+      action: 'update_read',
+      id: messageId,
+      read,
+    })
   } catch (err) {
-    console.error('[adminApi] Exception:', err.message)
+    console.error('[adminApi] Exception updating message:', err)
     throw err
   }
 }
 
 export async function saveProjects(categories, projects) {
-  if (!supabase) throw new Error('Supabase client not configured')
-
   try {
-    // Normalize projects
-    const normalizedProjects = projects.map((project, index) => ({
-      id: project.id,
-      title: project.title,
-      category: project.category,
-      description: project.description,
-      role: project.role,
-      tech_stack: Array.isArray(project.techStack) ? project.techStack : [],
-      ai_agent_arch: project.aiAgentArch || null,
-      outcomes: Array.isArray(project.outcomes) ? project.outcomes : [],
-      github_url: project.links?.github || null,
-      demo_url: project.links?.demo || null,
-      sort_order: index,
-      updated_at: new Date().toISOString(),
-    }))
-
-    // Delete all existing projects
-    const { error: deleteError } = await supabase
-      .from('portfolio_projects')
-      .delete()
-      .neq('id', '')
-
-    if (deleteError) throw deleteError
-
-    // Insert new projects
-    if (normalizedProjects.length > 0) {
-      const { error: insertError } = await supabase
-        .from('portfolio_projects')
-        .insert(normalizedProjects)
-
-      if (insertError) throw insertError
-    }
-
-    return { success: true }
+    return await callAdminFunction({
+      query: 'portfolio_projects',
+      action: 'replace_all',
+      projects,
+    })
   } catch (err) {
-    console.error('[adminApi] Save projects error:', err.message)
+    console.error('[adminApi] Save projects error:', err)
     throw err
   }
 }
