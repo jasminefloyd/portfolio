@@ -5,7 +5,7 @@ import { useAdminData } from '../../hooks/useAdminData'
 
 export default function VisitorStats() {
   function normalizeReferrer(referrer = '') {
-    if (!referrer) return 'Direct'
+    if (typeof referrer !== 'string' || !referrer) return 'Direct'
 
     try {
       const hostname = new URL(referrer).hostname.replace(/^www\./, '')
@@ -20,7 +20,7 @@ export default function VisitorStats() {
   }
 
   function getDeviceType(userAgent = '') {
-    const ua = userAgent.toLowerCase()
+    const ua = typeof userAgent === 'string' ? userAgent.toLowerCase() : ''
     if (/ipad|tablet|playbook|silk/.test(ua)) return 'Tablet'
     if (/mobi|android|iphone|ipod/.test(ua)) return 'Mobile'
     return 'Desktop'
@@ -48,9 +48,10 @@ export default function VisitorStats() {
       }
     }
 
-    const countries = visitors.filter((v) => v.country)
+    const safeVisitors = Array.isArray(visitors) ? visitors : []
+    const countries = safeVisitors.filter((v) => v?.country)
 
-    const totalVisitors = visitors?.length || 0
+    const totalVisitors = safeVisitors.length || 0
 
     const countryMap = {}
     countries?.forEach((v) => {
@@ -62,7 +63,7 @@ export default function VisitorStats() {
       .map(([country, count]) => ({ country, count }))
 
     const referrerMap = {}
-    visitors?.forEach((v) => {
+    safeVisitors.forEach((v) => {
       if (v.referrer) {
         const referrer = normalizeReferrer(v.referrer)
         referrerMap[referrer] = (referrerMap[referrer] || 0) + 1
@@ -74,7 +75,7 @@ export default function VisitorStats() {
       .map(([referrer, count]) => ({ referrer, count }))
 
     const utmSourceMap = {}
-    visitors?.forEach((v) => {
+    safeVisitors.forEach((v) => {
       if (v.utm_source) {
         utmSourceMap[v.utm_source] = (utmSourceMap[v.utm_source] || 0) + 1
       }
@@ -85,7 +86,7 @@ export default function VisitorStats() {
       .map(([source, count]) => ({ source, count }))
 
     const utmCampaignMap = {}
-    visitors?.forEach((v) => {
+    safeVisitors.forEach((v) => {
       if (v.utm_campaign) {
         utmCampaignMap[v.utm_campaign] = (utmCampaignMap[v.utm_campaign] || 0) + 1
       }
@@ -96,7 +97,7 @@ export default function VisitorStats() {
       .map(([campaign, count]) => ({ campaign, count }))
 
     const cityMap = {}
-    visitors?.forEach((v) => {
+    safeVisitors.forEach((v) => {
       const label = [v.city, v.country].filter(Boolean).join(', ')
       if (label) {
         cityMap[label] = (cityMap[label] || 0) + 1
@@ -108,7 +109,7 @@ export default function VisitorStats() {
       .map(([city, count]) => ({ city, count }))
 
     const deviceMap = {}
-    visitors?.forEach((v) => {
+    safeVisitors.forEach((v) => {
       const device = getDeviceType(v.user_agent)
       deviceMap[device] = (deviceMap[device] || 0) + 1
     })
@@ -116,8 +117,8 @@ export default function VisitorStats() {
       .sort((a, b) => b[1] - a[1])
       .map(([device, count]) => ({ device, count }))
 
-    const recentVisitors = visitors
-      ?.slice(0, 10)
+    const recentVisitors = safeVisitors
+      .slice(0, 10)
       .map((v) => ({
         id: v.id,
         user_id: v.user_id || 'unknown',

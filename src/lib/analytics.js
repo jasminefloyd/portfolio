@@ -4,6 +4,7 @@ const VISITOR_SESSION_KEY = 'visitor_id'
 const USER_ID_KEY = 'portfolio_user_id'
 const SESSION_START_KEY = 'profile_session_start'
 const SESSION_TRACKED_KEY = 'profile_session_tracked'
+let visitorTrackingPromise = null
 
 function getOrCreateUserId() {
   const existing = localStorage.getItem(USER_ID_KEY)
@@ -16,61 +17,68 @@ function getOrCreateUserId() {
 export async function trackVisitor() {
   if (!supabase) return null
   if (sessionStorage.getItem(VISITOR_SESSION_KEY)) return sessionStorage.getItem(VISITOR_SESSION_KEY)
+  if (visitorTrackingPromise) return visitorTrackingPromise
 
-  let locationData = {}
+  visitorTrackingPromise = (async () => {
+    let locationData = {}
 
-  try {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 3000)
-    const res = await fetch('https://ipapi.co/json/', { signal: controller.signal })
-    clearTimeout(timeout)
+    try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 3000)
+      const res = await fetch('https://ipapi.co/json/', { signal: controller.signal })
+      clearTimeout(timeout)
 
-    if (res.ok) {
-      const json = await res.json()
-      locationData = {
-        ip_address: json.ip,
-        country: json.country_name,
-        city: json.city,
-        state: json.region,
+      if (res.ok) {
+        const json = await res.json()
+        locationData = {
+          ip_address: json.ip,
+          country: json.country_name,
+          city: json.city,
+          state: json.region,
+        }
       }
+    } catch {
+      console.warn('[analytics] Location lookup failed — continuing without location data')
     }
-  } catch {
-    console.warn('[analytics] Location lookup failed — continuing without location data')
-  }
 
-  const params = new URLSearchParams(window.location.search)
-  const visitorId = crypto.randomUUID()
-  const userId = getOrCreateUserId()
+    const params = new URLSearchParams(window.location.search)
+    const visitorId = crypto.randomUUID()
+    const userId = getOrCreateUserId()
 
-  try {
-    const { error } = await supabase
-      .from('visitors')
-      .insert({
-        id: visitorId,
-        user_id: userId,
-        ...locationData,
-        referrer: document.referrer || null,
-        utm_source: params.get('utm_source'),
-        utm_medium: params.get('utm_medium'),
-        utm_campaign: params.get('utm_campaign'),
-        utm_term: params.get('utm_term'),
-        utm_content: params.get('utm_content'),
-        user_agent: navigator.userAgent,
-      })
+    try {
+      const { error } = await supabase
+        .from('visitors')
+        .insert({
+          id: visitorId,
+          user_id: userId,
+          ...locationData,
+          referrer: document.referrer || null,
+          utm_source: params.get('utm_source'),
+          utm_medium: params.get('utm_medium'),
+          utm_campaign: params.get('utm_campaign'),
+          utm_term: params.get('utm_term'),
+          utm_content: params.get('utm_content'),
+          user_agent: navigator.userAgent,
+        })
 
-    if (error) {
-      console.warn('[analytics] Failed to track visitor:', error.message)
+      if (error) {
+        console.warn('[analytics] Failed to track visitor:', error.message)
+        return null
+      }
+
+      sessionStorage.setItem(VISITOR_SESSION_KEY, visitorId)
+      sessionStorage.setItem(SESSION_START_KEY, String(Date.now()))
+      sessionStorage.setItem(SESSION_TRACKED_KEY, 'false')
+      return visitorId
+    } catch {
+      console.warn('[analytics] trackVisitor threw unexpectedly')
       return null
+    } finally {
+      visitorTrackingPromise = null
     }
+  })()
 
-    sessionStorage.setItem(VISITOR_SESSION_KEY, visitorId)
-    sessionStorage.setItem(SESSION_START_KEY, String(Date.now()))
-    sessionStorage.setItem(SESSION_TRACKED_KEY, 'false')
-    return visitorId
-  } catch {
-    console.warn('[analytics] trackVisitor threw unexpectedly')
-    return null
-  }
+  return visitorTrackingPromise
 }
 
 export async function trackSessionDuration() {
@@ -94,13 +102,17 @@ export async function trackSessionDuration() {
 export async function trackEvent(eventType, projectId = null, metadata = null) {
   if (!supabase) return
   try {
-    const visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY) || null
-    await supabase.from('events').insert({
+    const visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY) || await trackVisitor()
+    const { error } = await supabase.from('events').insert({
       visitor_id: visitorId,
       event_type: eventType,
       project_id: projectId,
       metadata,
     })
+
+    if (error) {
+      console.warn(`[analytics] Failed to track ${eventType}:`, error.message)
+    }
   } catch {
     console.warn('[analytics] trackEvent failed silently')
   }
