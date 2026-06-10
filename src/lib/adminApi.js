@@ -1,79 +1,94 @@
 import { supabase } from './supabaseClient'
 
-function getAdminToken() {
-  return import.meta.env.VITE_ADMIN_PASSWORD || ''
-}
-
-async function logFunctionErrorDetails(prefix, error) {
-  const response = error?.context
-  if (!response || typeof response.text !== 'function') {
-    console.error(prefix, error)
-    return
-  }
-
-  let body = ''
-  try {
-    body = await response.text()
-  } catch {
-    body = '[unable to read response body]'
-  }
-
-  console.error(prefix, {
-    message: error.message,
-    name: error.name,
-    status: response.status,
-    statusText: response.statusText,
-    body,
-  })
-}
-
 export async function fetchAdminData(query, filters = {}) {
   if (!supabase) throw new Error('Supabase client not configured')
 
-  const { data, error } = await supabase.functions.invoke('admin-data', {
-    body: { query, filters },
-    headers: {
-      'x-admin-secret': getAdminToken(),
-    },
-  })
+  try {
+    console.log(`[adminApi] Fetching ${query}...`)
+    let request = supabase.from(query).select('*')
 
-  if (error) {
-    await logFunctionErrorDetails('[adminApi] admin-data fetch error:', error)
-    throw new Error(error.message || 'Failed admin-data request')
+    if (filters?.orderBy) {
+      request = request.order(filters.orderBy, { ascending: Boolean(filters.ascending) })
+    } else if (query === 'portfolio_projects') {
+      request = request.order('sort_order', { ascending: true })
+    }
+
+    const { data, error } = await request
+
+    if (error) {
+      console.error(`[adminApi] Query error for ${query}:`, error)
+      throw new Error(error.message || `Failed to fetch ${query}`)
+    }
+
+    console.log(`[adminApi] Successfully fetched ${query}:`, data?.length || 0, 'records')
+    return data || []
+  } catch (err) {
+    console.error(`[adminApi] Exception fetching ${query}:`, err)
+    throw err
   }
-  return data
 }
 
 export async function updateMessageRead(messageId, read) {
   if (!supabase) throw new Error('Supabase client not configured')
 
-  const { data, error } = await supabase.functions.invoke('admin-data', {
-    body: { query: 'messages', action: 'update_read', id: messageId, read },
-    headers: {
-      'x-admin-secret': getAdminToken(),
-    },
-  })
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .update({ read })
+      .eq('id', messageId)
 
-  if (error) {
-    await logFunctionErrorDetails('[adminApi] admin-data update error:', error)
-    throw new Error(error.message || 'Failed to update message state')
+    if (error) {
+      console.error('[adminApi] Update error:', error.message)
+      throw new Error(error.message || 'Failed to update message state')
+    }
+
+    return data
+  } catch (err) {
+    console.error('[adminApi] Exception:', err.message)
+    throw err
   }
-  return data
 }
 
 export async function saveProjects(categories, projects) {
   if (!supabase) throw new Error('Supabase client not configured')
 
-  const { data, error } = await supabase.functions.invoke('admin-data', {
-    body: { query: 'portfolio_projects', action: 'replace_all', categories, projects },
-    headers: {
-      'x-admin-secret': getAdminToken(),
-    },
-  })
+  try {
+    // Normalize projects
+    const normalizedProjects = projects.map((project, index) => ({
+      id: project.id,
+      title: project.title,
+      category: project.category,
+      description: project.description,
+      role: project.role,
+      tech_stack: Array.isArray(project.techStack) ? project.techStack : [],
+      ai_agent_arch: project.aiAgentArch || null,
+      outcomes: Array.isArray(project.outcomes) ? project.outcomes : [],
+      github_url: project.links?.github || null,
+      demo_url: project.links?.demo || null,
+      sort_order: index,
+      updated_at: new Date().toISOString(),
+    }))
 
-  if (error) {
-    await logFunctionErrorDetails('[adminApi] admin-data projects save error:', error)
-    throw new Error(error.message || 'Failed to save projects')
+    // Delete all existing projects
+    const { error: deleteError } = await supabase
+      .from('portfolio_projects')
+      .delete()
+      .neq('id', '')
+
+    if (deleteError) throw deleteError
+
+    // Insert new projects
+    if (normalizedProjects.length > 0) {
+      const { error: insertError } = await supabase
+        .from('portfolio_projects')
+        .insert(normalizedProjects)
+
+      if (insertError) throw insertError
+    }
+
+    return { success: true }
+  } catch (err) {
+    console.error('[adminApi] Save projects error:', err.message)
+    throw err
   }
-  return data
 }

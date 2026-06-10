@@ -27,7 +27,27 @@ export default function VisitorStats() {
   }
 
   const loadStats = useCallback(async () => {
-    const visitors = await fetchAdminData('visitors')
+    console.log('[VisitorStats] Starting loadStats...')
+    let visitors = []
+    try {
+      visitors = await fetchAdminData('visitors')
+      console.log('[VisitorStats] Got visitors:', visitors?.length)
+    } catch (err) {
+      console.error('[VisitorStats] fetchAdminData failed:', err)
+      visitors = []
+      // Return empty state instead of throwing
+      return {
+        totalVisitors: 0,
+        topCountries: [],
+        topCities: [],
+        topReferrers: [],
+        topSources: [],
+        topCampaigns: [],
+        deviceBreakdown: [],
+        recentVisitors: [],
+      }
+    }
+
     const countries = visitors.filter((v) => v.country)
 
     const totalVisitors = visitors?.length || 0
@@ -107,6 +127,8 @@ export default function VisitorStats() {
         utm_source: v.utm_source || '-',
         utm_medium: v.utm_medium || '-',
         utm_campaign: v.utm_campaign || '-',
+        utm_term: v.utm_term || '-',
+        utm_content: v.utm_content || '-',
         device: getDeviceType(v.user_agent),
         created_at: v.created_at,
       })) || []

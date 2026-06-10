@@ -13,9 +13,35 @@ export default function EventStats() {
   }
 
   const loadStats = useCallback(async () => {
-    const events = await fetchAdminData('events')
-    const visitors = await fetchAdminData('visitors')
-    const projects = await fetchAdminData('portfolio_projects')
+    console.log('[EventStats] Starting loadStats...')
+    let events = []
+    let visitors = []
+    let projects = []
+
+    try {
+      events = await fetchAdminData('events')
+      console.log('[EventStats] Got events:', events?.length)
+    } catch (err) {
+      console.error('[EventStats] Failed to fetch events:', err)
+      events = []
+    }
+
+    try {
+      visitors = await fetchAdminData('visitors')
+      console.log('[EventStats] Got visitors:', visitors?.length)
+    } catch (err) {
+      console.error('[EventStats] Failed to fetch visitors:', err)
+      visitors = []
+    }
+
+    try {
+      projects = await fetchAdminData('portfolio_projects')
+      console.log('[EventStats] Got projects:', projects?.length)
+    } catch (err) {
+      console.error('[EventStats] Failed to fetch projects:', err)
+      projects = []
+    }
+
     const visitorById = Object.fromEntries((visitors || []).map((v) => [v.id, v]))
     const projectNameById = Object.fromEntries((projects || []).map((p) => [p.id, p.title]))
 

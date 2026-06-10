@@ -23,7 +23,7 @@ create table if not exists public.events (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz default now(),
   visitor_id uuid references public.visitors(id) on delete cascade,
-  event_type text check (event_type in ('resume_download', 'project_open')),
+  event_type text check (event_type in ('resume_download', 'project_open', 'external_profile_click', 'profile_session')),
   project_id text,
   metadata jsonb
 );
