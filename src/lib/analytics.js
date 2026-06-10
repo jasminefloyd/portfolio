@@ -4,20 +4,79 @@ const VISITOR_SESSION_KEY = 'visitor_id'
 const USER_ID_KEY = 'portfolio_user_id'
 const SESSION_START_KEY = 'profile_session_start'
 const SESSION_TRACKED_KEY = 'profile_session_tracked'
+const VISITOR_CONTEXT_KEY = 'visitor_context'
+const ANALYTICS_APP_ID = 'floyd-portfolio'
 let visitorTrackingPromise = null
 
 function resetVisitorSession() {
   sessionStorage.removeItem(VISITOR_SESSION_KEY)
   sessionStorage.removeItem(SESSION_START_KEY)
   sessionStorage.removeItem(SESSION_TRACKED_KEY)
+  sessionStorage.removeItem(VISITOR_CONTEXT_KEY)
 }
 
-async function insertEvent({ visitorId, eventType, projectId, metadata }) {
-  return supabase.from('events').insert({
+function getDeviceType(userAgent = '') {
+  const ua = typeof userAgent === 'string' ? userAgent.toLowerCase() : ''
+  if (/ipad|tablet|playbook|silk/.test(ua)) return 'tablet'
+  if (/mobi|android|iphone|ipod/.test(ua)) return 'phone'
+  return 'computer'
+}
+
+function getStoredVisitorContext() {
+  try {
+    const raw = sessionStorage.getItem(VISITOR_CONTEXT_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+async function insertAdminEvent({
+  visitorId,
+  userId,
+  eventType,
+  projectId,
+  externalTarget,
+  metadata,
+  pagePath,
+  locationData,
+  referrer,
+  params,
+  userAgent,
+}) {
+  return supabase.from('admin_events').insert({
+    app_id: ANALYTICS_APP_ID,
+    action: eventType,
     visitor_id: visitorId,
     event_type: eventType,
     project_id: projectId,
-    metadata,
+    external_target: externalTarget,
+    page_path: pagePath,
+    country: locationData?.country || null,
+    state: locationData?.state || null,
+    city: locationData?.city || null,
+    location_label: [locationData?.city, locationData?.state].filter(Boolean).join(', ') || null,
+    device_type: getDeviceType(userAgent),
+    user_agent: userAgent || null,
+    referrer: referrer || null,
+    utm_source: params?.get('utm_source') || null,
+    utm_medium: params?.get('utm_medium') || null,
+    utm_campaign: params?.get('utm_campaign') || null,
+    utm_term: params?.get('utm_term') || null,
+    utm_content: params?.get('utm_content') || null,
+    metadata: {
+      ...(metadata || {}),
+      app_id: ANALYTICS_APP_ID,
+      visitor_user_id: userId,
+      location_label: [locationData?.city, locationData?.state].filter(Boolean).join(', ') || null,
+      device_type: getDeviceType(userAgent),
+      referrer: referrer || null,
+      utm_source: params?.get('utm_source') || null,
+      utm_medium: params?.get('utm_medium') || null,
+      utm_campaign: params?.get('utm_campaign') || null,
+      utm_term: params?.get('utm_term') || null,
+      utm_content: params?.get('utm_content') || null,
+    },
   })
 }
 
@@ -59,22 +118,24 @@ export async function trackVisitor() {
     const params = new URLSearchParams(window.location.search)
     const visitorId = crypto.randomUUID()
     const userId = getOrCreateUserId()
+    const referrer = document.referrer || null
+    const userAgent = navigator.userAgent
+    const pagePath = window.location.pathname
 
     try {
-      const { error } = await supabase
-        .from('visitors')
-        .insert({
-          id: visitorId,
-          user_id: userId,
-          ...locationData,
-          referrer: document.referrer || null,
-          utm_source: params.get('utm_source'),
-          utm_medium: params.get('utm_medium'),
-          utm_campaign: params.get('utm_campaign'),
-          utm_term: params.get('utm_term'),
-          utm_content: params.get('utm_content'),
-          user_agent: navigator.userAgent,
-        })
+      const { error } = await insertAdminEvent({
+        visitorId,
+        userId,
+        eventType: 'visit',
+        projectId: null,
+        externalTarget: null,
+        metadata: null,
+        pagePath,
+        locationData,
+        referrer,
+        params,
+        userAgent,
+      })
 
       if (error) {
         console.warn('[analytics] Failed to track visitor:', error.message)
@@ -84,6 +145,14 @@ export async function trackVisitor() {
       sessionStorage.setItem(VISITOR_SESSION_KEY, visitorId)
       sessionStorage.setItem(SESSION_START_KEY, String(Date.now()))
       sessionStorage.setItem(SESSION_TRACKED_KEY, 'false')
+      sessionStorage.setItem(VISITOR_CONTEXT_KEY, JSON.stringify({
+        visitorId,
+        userId,
+        locationData,
+        referrer,
+        params: Object.fromEntries(params.entries()),
+        userAgent,
+      }))
       return visitorId
     } catch {
       console.warn('[analytics] trackVisitor threw unexpectedly')
@@ -117,14 +186,49 @@ export async function trackSessionDuration() {
 export async function trackEvent(eventType, projectId = null, metadata = null) {
   if (!supabase) return
   try {
+    const storedContext = getStoredVisitorContext()
     let visitorId = sessionStorage.getItem(VISITOR_SESSION_KEY) || await trackVisitor()
-    let { error } = await insertEvent({ visitorId, eventType, projectId, metadata })
+    const params = new URLSearchParams(window.location.search)
+    const userId = storedContext?.userId || getOrCreateUserId()
+    const locationData = storedContext?.locationData || {}
+    const referrer = storedContext?.referrer || document.referrer || null
+    const userAgent = storedContext?.userAgent || navigator.userAgent
+    const externalTarget = eventType === 'external_profile_click'
+      ? metadata?.profile || null
+      : null
+
+    let { error } = await insertAdminEvent({
+      visitorId,
+      userId,
+      eventType,
+      projectId,
+      externalTarget,
+      metadata,
+      pagePath: window.location.pathname,
+      locationData,
+      referrer,
+      params,
+      userAgent,
+    })
 
     if (error && visitorId) {
       console.warn(`[analytics] Retrying ${eventType} after resetting stale visitor session:`, error.message)
       resetVisitorSession()
       visitorId = await trackVisitor()
-      ;({ error } = await insertEvent({ visitorId, eventType, projectId, metadata }))
+      const refreshedContext = getStoredVisitorContext()
+      ;({ error } = await insertAdminEvent({
+        visitorId,
+        userId: refreshedContext?.userId || userId,
+        eventType,
+        projectId,
+        externalTarget,
+        metadata,
+        pagePath: window.location.pathname,
+        locationData: refreshedContext?.locationData || locationData,
+        referrer: refreshedContext?.referrer || referrer,
+        params,
+        userAgent: refreshedContext?.userAgent || userAgent,
+      }))
     }
 
     if (error) {

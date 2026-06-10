@@ -3,7 +3,7 @@
 //
 // This Edge Function is the secure read path for the admin dashboard.
 // It validates the admin password and uses the service_role key to query
-// visitors, events, and messages tables (anon key has no SELECT on these).
+// admin_events, messages, and portfolio_projects tables (anon key has no SELECT on these).
 //
 // Deploy with:
 //   supabase functions deploy admin-data --project-ref YOUR_PROJECT_REF
@@ -111,7 +111,7 @@ serve(async (req) => {
       })
     }
 
-    if (!['visitors', 'events', 'messages', 'portfolio_projects'].includes(query)) {
+    if (!['admin_events', 'messages', 'portfolio_projects'].includes(query)) {
       return new Response(JSON.stringify({ error: 'Invalid query target' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
@@ -119,10 +119,21 @@ serve(async (req) => {
     }
 
     let request = adminClient.from(query).select('*')
+    if (filters?.createdAtGte) {
+      request = request.gte('created_at', filters.createdAtGte)
+    }
+    if (filters?.createdAtLte) {
+      request = request.lte('created_at', filters.createdAtLte)
+    }
+    if (filters?.appId) {
+      request = request.eq('app_id', filters.appId)
+    }
     if (filters?.orderBy) {
       request = request.order(filters.orderBy, { ascending: Boolean(filters.ascending) })
     } else if (query === 'portfolio_projects') {
       request = request.order('sort_order', { ascending: true })
+    } else {
+      request = request.order('created_at', { ascending: false })
     }
 
     const { data, error } = await request

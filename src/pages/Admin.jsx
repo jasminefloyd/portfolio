@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import AdminLogin from '../components/admin/AdminLogin'
-import AnalyticsOverview from '../components/admin/AnalyticsOverview'
-import VisitorStats from '../components/admin/VisitorStats'
-import EventStats from '../components/admin/EventStats'
+import AnalyticsDashboard from '../components/admin/AnalyticsDashboard'
 import MessagesInbox from '../components/admin/MessagesInbox'
 import ProjectManager from '../components/admin/ProjectManager'
 
@@ -57,15 +55,18 @@ export default function Admin() {
           >
             Manage Projects
           </button>
+          <button
+            onClick={() => setTab('messages')}
+            className={`text-sm px-3 py-1.5 rounded ${tab === 'messages' ? 'bg-text-primary text-surface' : 'border border-border text-text-secondary'}`}
+          >
+            Messages
+          </button>
         </div>
 
         {tab === 'analytics' ? (
-          <>
-            <AnalyticsOverview />
-            <VisitorStats />
-            <EventStats />
-            <MessagesInbox />
-          </>
+          <AnalyticsDashboard />
+        ) : tab === 'messages' ? (
+          <MessagesInbox />
         ) : (
           <ProjectManager />
         )}
